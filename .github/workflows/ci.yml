@@ -1,5 +1,8 @@
 name: Offline synthetic checks
 on:
+  pull_request:
+  schedule:
+    - cron: '23 4,16 * * *'
   workflow_dispatch:
     inputs:
       drill:
@@ -8,12 +11,101 @@ on:
         default: false
 permissions:
   contents: read
+concurrency:
+  group: synthetic-checks-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('run-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
-  dispatcher:
+  native:
+    name: Native Python (advisory on PRs)
+    continue-on-error: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 10
     steps:
-      - name: Require the source check workflow
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.14.7'
+      - run: python -m unittest discover -s tests -v
+      - name: Failure notification drill
+        if: github.event_name == 'workflow_dispatch' && inputs.drill
+        run: exit 1
+  worker:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: cloudflare
+    env:
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: cloudflare/.node-version
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.14.7'
+      - run: npm ci --ignore-scripts
+      - run: npm test
+  notify:
+    needs: [native, worker]
+    if: failure() && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Create or comment on the failure issue
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: python
         run: |
-          printf '%s\n' 'Select the source-review ref to run synthetic checks.'
-          exit 1
+          import json
+          import os
+          import urllib.request
+
+          title = "Offline synthetic checks failed"
+          api = os.environ["GITHUB_API_URL"].rstrip("/")
+          repo = os.environ["GITHUB_REPOSITORY"]
+          run_url = (f'{os.environ["GITHUB_SERVER_URL"]}/{repo}/actions/runs/'
+                     f'{os.environ["GITHUB_RUN_ID"]}')
+          body = (f'Run: {run_url}\nSHA: {os.environ["GITHUB_SHA"]}\n'
+                  f'Event: {os.environ["GITHUB_EVENT_NAME"]}\n'
+                  f'Workflow: {os.environ["GITHUB_WORKFLOW"]}')
+
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, *args, **kwargs):
+                  return None
+
+          opener = urllib.request.build_opener(NoRedirect())
+
+          def request(method, path, payload=None):
+              data = None if payload is None else json.dumps(payload).encode()
+              req = urllib.request.Request(api + path, data=data, method=method, headers={
+                  "Authorization": "Bearer " + os.environ["GITHUB_TOKEN"],
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "Content-Type": "application/json",
+              })
+              with opener.open(req, timeout=30) as response:
+                  return json.load(response)
+
+          matches = []
+          page = 1
+          while True:
+              issues = request("GET", f"/repos/{repo}/issues?state=open&per_page=100&page={page}")
+              matches.extend(issue for issue in issues
+                             if "pull_request" not in issue and issue["title"] == title)
+              if len(issues) < 100:
+                  break
+              page += 1
+          if matches:
+              oldest = min(matches, key=lambda issue: (issue["created_at"], issue["number"]))
+              request("POST", f'/repos/{repo}/issues/{oldest["number"]}/comments', {"body": body})
+          else:
+              request("POST", f"/repos/{repo}/issues", {"title": title, "body": body})

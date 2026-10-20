@@ -1,0 +1,6 @@
+.env*
+.artoo-token
+data/
+__pycache__/
+*.py[cod]
+*.tmp

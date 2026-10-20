@@ -1,0 +1,44 @@
+{
+  "original_commit": "847d879af25d243e2b4f601349764cfd52ce5651",
+  "scope": "Native HTTP receiver, Hevy poller, Artoo exporter, tests and Hevy unit metadata",
+  "history_imported": false,
+  "excluded": [
+    "all .env and credential files",
+    "all runtime stores and records",
+    "original README (contains private observations)",
+    "samples not certified synthetic",
+    "openGym and optional collector code outside this release unit"
+  ],
+  "files": {
+    "server.py": {
+      "sha256": "d60be7eb579b61e7362dbe673d583d18f31c9e206fbaa198e193ed903ebb6511",
+      "git_blob": "0e9595b41bb50cc41f1f4d5e0af8f5993c72ac86"
+    },
+    "scripts/sync_hevy.py": {
+      "sha256": "2749aee925b415034087ad33711fdc3e10e88ed66c100494e5fe40a2a986be2d",
+      "git_blob": "4a63e4a8632e6287bd587b4e5ac37e08dc125bc3"
+    },
+    "scripts/export_artoo.py": {
+      "sha256": "3256ee9f02bc14a3a855bf495b3b30bd045e3d45c6c9f739e606d417cfd1c625",
+      "git_blob": "3e78edd2e5b19af0b09d93d66b73edda310c533b"
+    },
+    "tests/test_artoo.py": {
+      "sha256": "a7da89ace60bcd0c4205953cd933671c3a96cd65f5c769ea5b31c98bbd28e7de",
+      "git_blob": "80f2f3350954ef66a1bca90896dcd1a6cc414ca3"
+    },
+    "tests/test_sync_hevy.py": {
+      "sha256": "703e5cfd34e7003fe174234682f9a2850cbd7e7c26cf71aaeec7569ab17115ce",
+      "git_blob": "e97769771cb1ff33f739b4ddca69047ca0be4d5f"
+    },
+    "systemd/health-ingest-hevy.service": {
+      "sha256": "5b0f91b6df08e2b41bca40f95d39c6e5d9c1890c9475a7909f893385567c9e28",
+      "git_blob": "f3f6c713949a6627fd21db530bcf332d0eaa96eb"
+    },
+    "systemd/health-ingest-hevy.timer": {
+      "sha256": "a3872ed4b721562cc9d40a1208e0d80498d063ceedfb58513759f21af5f19adf",
+      "git_blob": "c7204d821fc6b28a5ec8018289cb80fb082f1d3d"
+    }
+  },
+  "provenance_limit": "Byte-equivalent source on disk; not loaded-in-memory revision proof. Original source and service unchanged.",
+  "manifest_scope": "Original imported snapshot only. Generic source differs; export-manifest.json records the current exported bytes."
+}

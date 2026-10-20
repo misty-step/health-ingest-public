@@ -1,0 +1,24 @@
+{
+  "name": "health-ingest-cloudflare",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "26.8.1"
+  },
+  "scripts": {
+    "build": "wrangler deploy --dry-run --outdir build && esbuild native-store-cli.mjs --bundle --platform=node --format=esm --outfile=build/native-store-cli.mjs",
+    "test": "npm run build && node --test --test-concurrency=1 test.mjs native-store.test.mjs telemetry.test.mjs"
+  },
+  "dependencies": {
+    "@sentry/cloudflare": "11.8.0",
+    "aws4fetch": "1.0.20",
+    "jose": "6.2.12",
+    "stream-chain": "4.2.6",
+    "stream-json": "3.7.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "miniflare": "5.20261012.0-beta",
+    "wrangler": "4.151.0"
+  }
+}

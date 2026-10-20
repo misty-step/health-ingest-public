@@ -1,0 +1,519 @@
+{
+  "history_included": false,
+  "manifest_note": "This manifest excludes its own digest; hash it separately for custody.",
+  "output_files": [
+    {
+      "mode": "100644",
+      "path": ".github/workflows/ci.yml",
+      "sha256": "5a416bb42292238331e0e3bb3e1ca6801d108460f506f1b915e2e3324b99a2dc"
+    },
+    {
+      "mode": "100644",
+      "path": ".gitignore",
+      "sha256": "f2f5eae7922f00ac7b7b15b0638ca31b6dd18fec86ef77fb4cb760404b965607"
+    },
+    {
+      "mode": "100644",
+      "path": "README.md",
+      "sha256": "745d0e42fd5c6bc28eb7abf997992315df853390036ac375b945df749b703fa1"
+    },
+    {
+      "mode": "100644",
+      "path": "SPEC.md",
+      "sha256": "1acb3601dcef16f47349db45856ea9163f0b0d15c90cc6aff4d822342662f853"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/.gitignore",
+      "sha256": "9b08b8adef367bce9faf8d8d49993971ea06f5801053f88934c64eba4f3e58d4"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/.node-version",
+      "sha256": "50b8995029fdebc8ca439031c6945518d38ab6ad38a3985c9ba386bfafebcb35"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/README.md",
+      "sha256": "b79d2c09b75a5ee538b1f035a46058c3cb72affcf9c4181bcbede6f491cff230"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/SPEC.md",
+      "sha256": "520cf45fa5610d403cac4f78cc30f570fbc1cc66ea19ddbd58de8c34c6100a9f"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/hevy-stub.mjs",
+      "sha256": "6128b736baa5571dc13441f5e487b34bf0dde9f3b44f6bfee76ce2571a343bb1"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/native-store-cli.mjs",
+      "sha256": "0ae470c9bffb626a01952e23734f8eb4f5ed11d6fa478b63a50484ba9993d4ce"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/native-store.mjs",
+      "sha256": "5609271b15fcd26d75a95ef53bad8011cdf1ad12988aa79a0285d81ef541da05"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/native-store.test.mjs",
+      "sha256": "43c589f7e4a7882d79d977336e19d42d2c2795a590d8ad87e4fe5214f383bd00"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/package-lock.json",
+      "sha256": "ae84b63ef1da0342a3460d2dfa9b6cc722ccf1f0e07517d7da3395c4832b391a"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/package.json",
+      "sha256": "f9b815170f22de94e3187ac271ad5adb79193aa7b9bf3dbad3dd13a39482d969"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/r2-bucket.mjs",
+      "sha256": "0e2ae036437e394e99c446042403213ea0004ac64fc1640fd89b661d4d96a3b3"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/staging-expiry.mjs",
+      "sha256": "4d7cbd71b7c51cddf60691b079a139efbaca252af5ef1a76d7ff92fd17664e16"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/telemetry.mjs",
+      "sha256": "463ab77773883e7591ffec3cb987ca06b2498107c1b547994d962c161743127e"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/telemetry.test.mjs",
+      "sha256": "0e7603afbec6c3bcc81e67d8f95e91d73fae4a6001344c399e36d836ff066771"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/test.mjs",
+      "sha256": "eeb93bb308d11306bab7ee5f8a56a5f56cd7f2d627659fa37f8bc12c77652c01"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/worker.mjs",
+      "sha256": "7961a3c6f688c8861b4dbb4078d16c0938d6c9dbf1b75899ff673d1f886ee4e9"
+    },
+    {
+      "mode": "100644",
+      "path": "cloudflare/wrangler.json",
+      "sha256": "d58f002e984780aa09428b3cf4f91f19e20403e2ec3e27c85de44bf3d81a0128"
+    },
+    {
+      "mode": "100644",
+      "path": "config/synthetic.env.example",
+      "sha256": "d87abc66cc1eaa2d9c5df9f9b58675ae855eba1f3fc2098dbfd624e197fa0edc"
+    },
+    {
+      "mode": "100644",
+      "path": "docs/adr/0001-cloudflare-ingest.md",
+      "sha256": "685e5803387625eb1ee0874ed3bc52e7853ab53e9c39e1acd248f73150290951"
+    },
+    {
+      "mode": "100644",
+      "path": "docs/public-export.md",
+      "sha256": "d4b0b7dfe82c702dd8fe220fb82a0bf2cc0849b5edda4cafb5a3150ffe50f1f5"
+    },
+    {
+      "mode": "100644",
+      "path": "docs/source-custody.json",
+      "sha256": "7e1d0433592824610347342f8e1254d76dca5c555e57bd46325886eabc227f6d"
+    },
+    {
+      "mode": "100755",
+      "path": "scripts/export_artoo.py",
+      "sha256": "9b6b8522027e81953a8384cf0c4cdf5ef6f18ec5649ec6d43245c7203b903127"
+    },
+    {
+      "mode": "100644",
+      "path": "scripts/poll_cloudflare_hevy.py",
+      "sha256": "29a033675d71be529277b310e6bec1f899191e7fe1afd835de7f158c814e5b43"
+    },
+    {
+      "mode": "100755",
+      "path": "scripts/sync_hevy.py",
+      "sha256": "be35a5fae37f41ab59061e1758d37d5a27fe6fd0e2d07734ea471ecc5d9fa610"
+    },
+    {
+      "mode": "100644",
+      "path": "server.py",
+      "sha256": "959825329ced23e95e9d927d0dfc830bc6be57b8098ebea52cc6827b1cbe8cde"
+    },
+    {
+      "mode": "100644",
+      "path": "systemd/health-ingest-hevy.service",
+      "sha256": "00a11f73da20f87ba0be97bc1612d19617ce4f861bdd7ba4b703f97805c86a38"
+    },
+    {
+      "mode": "100644",
+      "path": "systemd/health-ingest-hevy.timer",
+      "sha256": "a3872ed4b721562cc9d40a1208e0d80498d063ceedfb58513759f21af5f19adf"
+    },
+    {
+      "mode": "100644",
+      "path": "tests/test_artoo.py",
+      "sha256": "b8ac9f51ebdc0937269a756cc02e8438c3be8b85b98b582ad28cf61d8b57040c"
+    },
+    {
+      "mode": "100644",
+      "path": "tests/test_cloudflare_poller.py",
+      "sha256": "531b75c7ca74af83a3c0170364a5231e33c4a469483ffff5415a5ba47891174d"
+    },
+    {
+      "mode": "100644",
+      "path": "tests/test_configuration.py",
+      "sha256": "9f54ba58a2fac05e5fafd3bb0fc9bea335b7889f8dccca05bacc5be1f992c04f"
+    },
+    {
+      "mode": "100644",
+      "path": "tests/test_ingest.py",
+      "sha256": "76f95d79b2ce48484d33e6695c6959287e5af7c20b5aa4874e62ad9db476369d"
+    },
+    {
+      "mode": "100644",
+      "path": "tests/test_sync_hevy.py",
+      "sha256": "703e5cfd34e7003fe174234682f9a2850cbd7e7c26cf71aaeec7569ab17115ce"
+    }
+  ],
+  "source_commit": "1f3ab9d29669bd7e37e6639596b861be75f16169",
+  "source_files": [
+    {
+      "disposition": "excluded",
+      "mode": "100644",
+      "path": ".github/workflows/cloudflare.yml",
+      "reason": "Private deployment and persistent-runner workflow",
+      "sha256": "9bcbd2f74e4b13c3ebbfcafb0aef0c06666862cc7a84f64a871a44b1d56626e6"
+    },
+    {
+      "disposition": "excluded",
+      "mode": "100644",
+      "path": ".github/workflows/native.yml",
+      "reason": "Private persistent-runner workflow",
+      "sha256": "c2632ad77927b72d78606a5c737bc0d4e3f91a79693b1cc65e65271189812676"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": ".gitignore",
+      "path": ".gitignore",
+      "sha256": "f2f5eae7922f00ac7b7b15b0638ca31b6dd18fec86ef77fb4cb760404b965607"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "README.md",
+      "path": "README.md",
+      "sha256": "745d0e42fd5c6bc28eb7abf997992315df853390036ac375b945df749b703fa1"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "SPEC.md",
+      "path": "SPEC.md",
+      "sha256": "1acb3601dcef16f47349db45856ea9163f0b0d15c90cc6aff4d822342662f853"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/.gitignore",
+      "path": "cloudflare/.gitignore",
+      "sha256": "9b08b8adef367bce9faf8d8d49993971ea06f5801053f88934c64eba4f3e58d4"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/.node-version",
+      "path": "cloudflare/.node-version",
+      "sha256": "50b8995029fdebc8ca439031c6945518d38ab6ad38a3985c9ba386bfafebcb35"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/README.md",
+      "path": "cloudflare/README.md",
+      "sha256": "b79d2c09b75a5ee538b1f035a46058c3cb72affcf9c4181bcbede6f491cff230"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/SPEC.md",
+      "path": "cloudflare/SPEC.md",
+      "sha256": "520cf45fa5610d403cac4f78cc30f570fbc1cc66ea19ddbd58de8c34c6100a9f"
+    },
+    {
+      "disposition": "excluded",
+      "mode": "100644",
+      "path": "cloudflare/deploy.mjs",
+      "reason": "Private account and deployment control",
+      "sha256": "5394f2e51f54fe974badb26e24c62541670905675356281c1876dfb441ef8329"
+    },
+    {
+      "disposition": "excluded",
+      "mode": "100644",
+      "path": "cloudflare/deploy.test.mjs",
+      "reason": "Private deployment helper tests",
+      "sha256": "f40c391000a4d87aa214937f1be865f9b9ad67209f26665cb833f44caeb77261"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/hevy-stub.mjs",
+      "path": "cloudflare/hevy-stub.mjs",
+      "sha256": "6128b736baa5571dc13441f5e487b34bf0dde9f3b44f6bfee76ce2571a343bb1"
+    },
+    {
+      "disposition": "excluded",
+      "mode": "100644",
+      "path": "cloudflare/hosted-preview.mjs",
+      "reason": "Private hosted preview and resource configuration",
+      "sha256": "c2854401e9d60fc16d9b5de7b18850411c4e99ef63690df8ef7d428f62cf4e61"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/native-store-cli.mjs",
+      "path": "cloudflare/native-store-cli.mjs",
+      "sha256": "0ae470c9bffb626a01952e23734f8eb4f5ed11d6fa478b63a50484ba9993d4ce"
+    },
+    {
+      "disposition": "excluded",
+      "mode": "100644",
+      "path": "cloudflare/native-store-hosted.mjs",
+      "reason": "Private hosted preview orchestration",
+      "sha256": "b73f0ca34b2c21b88f3f89fc3d6324567918d6422079b09ad26a991b386aeb40"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/native-store.mjs",
+      "path": "cloudflare/native-store.mjs",
+      "sha256": "5609271b15fcd26d75a95ef53bad8011cdf1ad12988aa79a0285d81ef541da05"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/native-store.test.mjs",
+      "path": "cloudflare/native-store.test.mjs",
+      "sha256": "43c589f7e4a7882d79d977336e19d42d2c2795a590d8ad87e4fe5214f383bd00"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/package-lock.json",
+      "path": "cloudflare/package-lock.json",
+      "sha256": "ae84b63ef1da0342a3460d2dfa9b6cc722ccf1f0e07517d7da3395c4832b391a"
+    },
+    {
+      "disposition": "replaced",
+      "mode": "100644",
+      "output": "cloudflare/package.json",
+      "path": "cloudflare/package.json",
+      "sha256": "b72e097931028338c488a79603f31082beeba8b3cc853d47bd3ceea64cfa3a98"
+    },
+    {
+      "disposition": "excluded",
+      "mode": "100644",
+      "path": "cloudflare/promote.mjs",
+      "reason": "Private production promotion",
+      "sha256": "626f1423cf0e7855838f19d9eab560ebe26e828eac4f36bb455530bda543c26d"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/r2-bucket.mjs",
+      "path": "cloudflare/r2-bucket.mjs",
+      "sha256": "0e2ae036437e394e99c446042403213ea0004ac64fc1640fd89b661d4d96a3b3"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/staging-expiry.mjs",
+      "path": "cloudflare/staging-expiry.mjs",
+      "sha256": "4d7cbd71b7c51cddf60691b079a139efbaca252af5ef1a76d7ff92fd17664e16"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/telemetry.mjs",
+      "path": "cloudflare/telemetry.mjs",
+      "sha256": "463ab77773883e7591ffec3cb987ca06b2498107c1b547994d962c161743127e"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/telemetry.test.mjs",
+      "path": "cloudflare/telemetry.test.mjs",
+      "sha256": "0e7603afbec6c3bcc81e67d8f95e91d73fae4a6001344c399e36d836ff066771"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/test.mjs",
+      "path": "cloudflare/test.mjs",
+      "sha256": "eeb93bb308d11306bab7ee5f8a56a5f56cd7f2d627659fa37f8bc12c77652c01"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "cloudflare/worker.mjs",
+      "path": "cloudflare/worker.mjs",
+      "sha256": "7961a3c6f688c8861b4dbb4078d16c0938d6c9dbf1b75899ff673d1f886ee4e9"
+    },
+    {
+      "disposition": "replaced",
+      "mode": "100644",
+      "output": "cloudflare/wrangler.json",
+      "path": "cloudflare/wrangler.json",
+      "sha256": "297ae229891732aac007e6965ca2f2d4a24f21fd20daafaeb37235f74f9a4757"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "config/synthetic.env.example",
+      "path": "config/synthetic.env.example",
+      "sha256": "d87abc66cc1eaa2d9c5df9f9b58675ae855eba1f3fc2098dbfd624e197fa0edc"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "docs/adr/0001-cloudflare-ingest.md",
+      "path": "docs/adr/0001-cloudflare-ingest.md",
+      "sha256": "685e5803387625eb1ee0874ed3bc52e7853ab53e9c39e1acd248f73150290951"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "docs/public-export.md",
+      "path": "docs/public-export.md",
+      "sha256": "d4b0b7dfe82c702dd8fe220fb82a0bf2cc0849b5edda4cafb5a3150ffe50f1f5"
+    },
+    {
+      "disposition": "replaced",
+      "mode": "100644",
+      "output": "docs/source-custody.json",
+      "path": "docs/source-custody.json",
+      "sha256": "1613dd6dbe71c035e280689bd1d2d681443b69ba22fef396c14d6d066df4b01c"
+    },
+    {
+      "disposition": "excluded",
+      "mode": "100644",
+      "path": "publication/export-plan.json",
+      "reason": "Private source export allowlist",
+      "sha256": "0184d4931224486de3a92a02438a11e0d4dcc5945f107be78df5204bc85d09fc"
+    },
+    {
+      "disposition": "template",
+      "mode": "100644",
+      "output": ".github/workflows/ci.yml",
+      "path": "publication/public-ci.yml",
+      "sha256": "5a416bb42292238331e0e3bb3e1ca6801d108460f506f1b915e2e3324b99a2dc"
+    },
+    {
+      "disposition": "template",
+      "mode": "100644",
+      "output": null,
+      "path": "publication/wrangler.json",
+      "sha256": "d58f002e984780aa09428b3cf4f91f19e20403e2ec3e27c85de44bf3d81a0128"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100755",
+      "output": "scripts/export_artoo.py",
+      "path": "scripts/export_artoo.py",
+      "sha256": "9b6b8522027e81953a8384cf0c4cdf5ef6f18ec5649ec6d43245c7203b903127"
+    },
+    {
+      "disposition": "excluded",
+      "mode": "100644",
+      "path": "scripts/export_public.py",
+      "reason": "Private source export builder",
+      "sha256": "b9ff9d5c71bac182688860a6ea4330613ef43e8235be4c6841c1b33c71ecefb5"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "scripts/poll_cloudflare_hevy.py",
+      "path": "scripts/poll_cloudflare_hevy.py",
+      "sha256": "29a033675d71be529277b310e6bec1f899191e7fe1afd835de7f158c814e5b43"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100755",
+      "output": "scripts/sync_hevy.py",
+      "path": "scripts/sync_hevy.py",
+      "sha256": "be35a5fae37f41ab59061e1758d37d5a27fe6fd0e2d07734ea471ecc5d9fa610"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "server.py",
+      "path": "server.py",
+      "sha256": "959825329ced23e95e9d927d0dfc830bc6be57b8098ebea52cc6827b1cbe8cde"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "systemd/health-ingest-hevy.service",
+      "path": "systemd/health-ingest-hevy.service",
+      "sha256": "00a11f73da20f87ba0be97bc1612d19617ce4f861bdd7ba4b703f97805c86a38"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "systemd/health-ingest-hevy.timer",
+      "path": "systemd/health-ingest-hevy.timer",
+      "sha256": "a3872ed4b721562cc9d40a1208e0d80498d063ceedfb58513759f21af5f19adf"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "tests/test_artoo.py",
+      "path": "tests/test_artoo.py",
+      "sha256": "b8ac9f51ebdc0937269a756cc02e8438c3be8b85b98b582ad28cf61d8b57040c"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "tests/test_cloudflare_poller.py",
+      "path": "tests/test_cloudflare_poller.py",
+      "sha256": "531b75c7ca74af83a3c0170364a5231e33c4a469483ffff5415a5ba47891174d"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "tests/test_configuration.py",
+      "path": "tests/test_configuration.py",
+      "sha256": "9f54ba58a2fac05e5fafd3bb0fc9bea335b7889f8dccca05bacc5be1f992c04f"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "tests/test_ingest.py",
+      "path": "tests/test_ingest.py",
+      "sha256": "76f95d79b2ce48484d33e6695c6959287e5af7c20b5aa4874e62ad9db476369d"
+    },
+    {
+      "disposition": "excluded",
+      "mode": "100644",
+      "path": "tests/test_public_export.py",
+      "reason": "Private source export builder tests",
+      "sha256": "4b9a586c4d3cdda1628b60bea8ca614c459900e06687ba6ce72a61f13a69b0c0"
+    },
+    {
+      "disposition": "retained",
+      "mode": "100644",
+      "output": "tests/test_sync_hevy.py",
+      "path": "tests/test_sync_hevy.py",
+      "sha256": "703e5cfd34e7003fe174234682f9a2850cbd7e7c26cf71aaeec7569ab17115ce"
+    }
+  ],
+  "version": 1
+}

@@ -1,0 +1,8 @@
+[Unit]
+Description=Poll Hevy workout events into health-ingest (read-only)
+
+[Service]
+Type=oneshot
+EnvironmentFile=%h/.config/health-ingest/hevy.env
+WorkingDirectory=%h/.local/share/health-ingest
+ExecStart=%h/.local/bin/pass-env run -f %h/.config/health-ingest/hevy.env.pass -- /usr/bin/python3 scripts/sync_hevy.py --poll
