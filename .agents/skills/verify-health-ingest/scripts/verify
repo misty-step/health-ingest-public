@@ -54,8 +54,6 @@ SYN = {
 LIVE_NATIVE_PORT = 8789  # an installed receiver may own this; never drive it
 CURL_CONFIGS = {"WRITER_CURL": ("WRITER_ID", "WRITER_SECRET"), "POLLER_CURL": ("POLLER_ID", "POLLER_SECRET"),
                 "UNPINNED_CURL": ("UNPINNED_ID", "UNPINNED_SECRET")}
-WORKER_SOURCES = ["worker.mjs", "telemetry.mjs", "native-store.mjs", "native-store-cli.mjs", "r2-bucket.mjs",
-                  "staging-expiry.mjs", "package-lock.json", "wrangler.json"]
 
 
 def redact(text):
@@ -72,7 +70,9 @@ def head(short=False):
 def stale_builds():
     """Build outputs older than any Worker source they bundle (None when fresh)."""
     cf = REPO / "cloudflare"
-    newest = max((cf / name).stat().st_mtime for name in WORKER_SOURCES if (cf / name).exists())
+    sources = [p for p in cf.glob("*.mjs") if not p.name.endswith(".test.mjs") and p.name != "test.mjs"]
+    sources += [cf / "package-lock.json", cf / "wrangler.json"]
+    newest = max(p.stat().st_mtime for p in sources if p.exists())
     return [name for name in ("worker.js", "native-store-cli.mjs")
             if not (cf / "build" / name).exists() or (cf / "build" / name).stat().st_mtime < newest]
 
@@ -152,6 +152,11 @@ def wait_for(check, seconds, what):
 _TAILNET = []
 
 
+def build_hash():
+    path = REPO / "cloudflare" / "build" / "worker.js"
+    return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
+
+
 def tailnet_ip():
     if _TAILNET:
         return _TAILNET[0]
@@ -200,6 +205,7 @@ def cmd_new(_args):
         CURRENT.unlink()
     CURRENT.symlink_to(run)
     print(run)
+    print(f"export VERIFY_RUN='{run}'  # pin this in every later call if any other agent may use this checkout")
 
 
 def up_native(run, state, tailnet):
@@ -254,7 +260,7 @@ def up_edge(run, state):
                       env={"VERIFY_RELEASE": f"verify-{release}"})
     component.update(url=f"http://127.0.0.1:{ports['edge']}", origin=f"http://127.0.0.1:{ports['origin']}",
                      control=f"http://127.0.0.1:{ports['control']}", release=f"verify-{release}",
-                     hevy_url=hevy["url"])
+                     hevy_url=hevy["url"], build=build_hash())
     state["components"]["edge"] = component
     def ready():
         with open(component["log"], "rb") as log:
@@ -279,8 +285,9 @@ def cmd_up(args):
          "edge": lambda: up_edge(run, state)}[name]()
         save_state(run, state)
     edge, hevy = state["components"].get("edge"), state["components"].get("hevy")
-    if alive(edge) and hevy and edge.get("hevy_url") != hevy["url"]:
-        print("edge points at an old fictional Hevy URL; restarting it")
+    stale = alive(edge) and edge.get("build") != build_hash()
+    if alive(edge) and hevy and (edge.get("hevy_url") != hevy["url"] or stale):
+        print("edge runs an older build or points at an old fictional Hevy URL; restarting it")
         stop("edge", edge)
         up_edge(run, state)
         save_state(run, state)
@@ -358,6 +365,8 @@ def cmd_doctor(_args):
     edge = c.get("edge")
     if edge:
         check(alive(edge), "local Worker process ours", f"pid {edge['pid']}")
+        check(edge.get("build") == build_hash(), "Worker runs the current build/worker.js",
+              "rebuilt since the edge started: run `verify up edge`" if edge.get("build") != build_hash() else "")
         check(not hevy or edge.get("hevy_url") == hevy["url"], "Worker calls this run's fictional Hevy",
               f"{edge.get('hevy_url')} (hevy at {hevy['url'] if hevy else '-'})")
         try:
@@ -440,7 +449,10 @@ def cmd_assertion(args):
         if flag not in names:
             die(f"unknown flag {flag}", 2)
         value = next(it, None) or die(f"{flag} needs a value", 2)
-        claims[names[flag]] = int(value) if flag in ("--ttl", "--iat-offset") else value
+        try:
+            claims[names[flag]] = int(value) if flag in ("--ttl", "--iat-offset") else value
+        except ValueError:
+            die(f"{flag} needs an integer number of seconds", 2)
     if ("email" in claims) == ("client_id" in claims):
         die("give exactly one of --email or --client-id", 2)
     status, _, body = http(f"{edge['control']}/sign", {"Content-Type": "application/json"}, "POST",

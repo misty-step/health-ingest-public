@@ -42,3 +42,4 @@ Preconditions:
 - Partial failure is a known, specified gap (SPEC.md, "Known gaps"). Pages posted before the failure stay in the store, so the retry appends them again. Expect `events` records to exceed the event count after a partial run. That is not a harness fault.
 - `sync_hevy_stubbed.py` swaps only the upstream base URL and refuses non-loopback values. It never contacts api.hevyapp.com. Never run plain `scripts/sync_hevy.py` with a real key for verification.
 - `HEVY_API_KEY` is read only from the process environment, never from `--env-file`.
+- The self-redirect proves this CLI does not follow redirects. The Worker's own no-redirect rule cannot be observed here, because a followed redirect would come back through the edge and fail with 502 before reaching the stub; `npm test` covers it.

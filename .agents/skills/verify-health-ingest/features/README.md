@@ -6,7 +6,7 @@ This directory is the maintained source for verifying what callers of the public
 
 - `cloudflare/node_modules` is installed and `cloudflare/build/` is fresh (SKILL.md "Launch").
 - A run exists and is up: `.agents/skills/verify-health-ingest/scripts/verify new`, then `... up --tailnet`.
-- Every tool call starts with `eval "$(.agents/skills/verify-health-ingest/scripts/verify env)"`, because each call is a fresh shell. All `$NAME` values below come from it.
+- Every tool call starts with `export VERIFY_RUN=<the run dir verify new printed>` and `eval "$(.agents/skills/verify-health-ingest/scripts/verify env)"`, because each call is a fresh shell. All `$NAME` values below come from it.
 - `$V doctor` ends with `doctor: ok`.
 - Commands run from the repository root with `python3.14`.
 - Never drive an instance this run did not start, port 8789, or any installed receiver or deployed Worker.

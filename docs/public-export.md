@@ -11,5 +11,7 @@ records the current generic source, including modifications since that import.
 No first-party license is added or inferred. Dependency license metadata remains
 in the lockfile.
 
+Repository-local verification files are maintained in this repository, not exported, and so are absent from the manifest: `.agents/skills/verify-health-ingest/`, its `.claude/skills/verify-health-ingest` link and `docs/evidence/verify-health-ingest/`.
+
 The source contains synthetic configuration and local tests. Deployment,
 resource provisioning and service installation are operator responsibilities.

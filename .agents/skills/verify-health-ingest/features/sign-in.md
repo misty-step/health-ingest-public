@@ -41,7 +41,7 @@ Preconditions:
   - `signin-origin-future`: `--email "$OWNER_EMAIL" --iat-offset 300` gives `403`.
   - `signin-origin-stranger`: `--email "$STRANGER_EMAIL"` gives `403`.
   - `signin-origin-forged`: the literal unsigned `eyJhbGciOiJub25lIn0.eyJlbWFpbCI6ImZpY3Rpb25hbC1vd25lckBleGFtcGxlLmludmFsaWQifQ.` gives `403`.
-- **Assertion stripped at the edge.** Run `$V rec signin-edge-strips -- sh -c 'curl -sS -o /dev/null -w "%{http_code} %{redirect_url}\n" -H "Cf-Access-Jwt-Assertion: $("$V" assertion --email "$OWNER_EMAIL")" "$EDGE_URL/healthz"'`. It prints `302` to login: the same assertion the origin accepted is ignored when a client supplies it.
+- **Assertion stripped at the edge.** Send the poller's token together with an owner assertion the origin accepts: `$V rec signin-edge-strips -- sh -c 'curl -sS -w "\n%{http_code}\n" -K "$POLLER_CURL" -H "Cf-Access-Jwt-Assertion: $("$V" assertion --email "$OWNER_EMAIL")" "$EDGE_URL/healthz"'`. It gives `403 {"error":"forbidden"}`, the poller's answer. Had the owner assertion survived, it would be the owner's Worker JSON, so the edge replaced the client's assertion with its own.
 - **Machine identities.** Record GET `/healthz` with:
   - `-K "$UNPINNED_CURL"` as `signin-unpinned`: `403`.
   - `-H "CF-Access-Client-Id: $WRITER_ID" -H "CF-Access-Client-Secret: wrong"` as `signin-bad-secret`: `302` to login.

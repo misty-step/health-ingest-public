@@ -176,7 +176,12 @@ const control = createServer(async (req, res) => {
   if (req.method === 'POST' && url.pathname === '/sign') {
     const chunks = [];
     for await (const chunk of req) chunks.push(chunk);
-    const claims = JSON.parse(Buffer.concat(chunks).toString() || '{}');
+    let claims;
+    try { claims = JSON.parse(Buffer.concat(chunks).toString() || '{}'); } catch { claims = null; }
+    if (!claims || typeof claims !== 'object' || (!claims.email === !claims.client_id)) {
+      res.writeHead(400, { 'Content-Type': 'text/plain' }).end('give JSON with exactly one of email or client_id\n');
+      return;
+    }
     const subject = claims.email ? { sub: 'synthetic-signed', email: claims.email } : { sub: '', common_name: claims.client_id };
     const jwt = await sign(subject, claims.ttl ?? 300,
       { issuer: claims.issuer, audience: claims.audience, iatOffset: claims.iat_offset ?? 0 });

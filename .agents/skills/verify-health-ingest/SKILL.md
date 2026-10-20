@@ -27,7 +27,7 @@ Then, per run:
 
 `up` prints one `ready` line per component and returns only when each answers. The receiver's `/healthz` says `ok`, the fictional Hevy answers `/__mode`, and the Worker edge logs `local-edge ready`. A new run starts from empty stores; restarting a component inside a run keeps its store. Name components to start a subset (`$V up native hevy`). Without `--tailnet`, the receiver binds 127.0.0.1 and the Artoo route is unreachable, because it requires a 100.64.0.0/10 peer.
 
-**Each agent tool call is a fresh shell.** Start every call with `eval "$(.agents/skills/verify-health-ingest/scripts/verify env)"`. It defines `$V` (this helper), the URLs, the run's random receiver tokens, `$D` (today, UTC), `$ST`, `$J`, `$SYNC`, `$FIXED_GZ` and the curl configs `$WRITER_CURL`, `$POLLER_CURL` and `$UNPINNED_CURL`. It also defines every environment variable the shipped CLIs read: `HEVY_API_KEY`, `HEALTH_INGEST_TOKEN`, `HEALTH_INGEST_POLL_URL`, `HEALTH_INGEST_POLLER_HEADERS_FILE` and `ARTOO_*`. All values are synthetic.
+**Each agent tool call is a fresh shell.** `verify new` prints the run directory and an `export VERIFY_RUN=...` line. Start every later call with that `export VERIFY_RUN=...` and then `eval "$(.agents/skills/verify-health-ingest/scripts/verify env)"`. It defines `$V` (this helper), the URLs, the run's random receiver tokens, `$D` (today, UTC), `$ST`, `$J`, `$SYNC`, `$FIXED_GZ` and the curl configs `$WRITER_CURL`, `$POLLER_CURL` and `$UNPINNED_CURL`. It also defines every environment variable the shipped CLIs read: `HEVY_API_KEY`, `HEALTH_INGEST_TOKEN`, `HEALTH_INGEST_POLL_URL`, `HEALTH_INGEST_POLLER_HEADERS_FILE` and `ARTOO_*`. All values are synthetic.
 
 What `up` starts:
 
@@ -35,7 +35,7 @@ What `up` starts:
 - **hevy**: `scripts/fake_hevy.py`, a fictional Hevy API that accepts only the synthetic UUID key and logs every request to `<run>/hevy/requests.jsonl`.
 - **edge**: `scripts/local-edge.mjs`, the built Worker in real local workerd (Miniflare) with a persistent local R2 under `<run>/edge/r2`. In front of it is an emulated Cloudflare Access edge that turns synthetic service tokens and a login cookie into assertions signed with a per-run key. The bare Worker is reachable at `$ORIGIN_URL`, and its outbound Hevy calls go to the fictional API.
 
-Each checkout has its own current-run pointer, so agents in separate worktrees never touch each other's runs. Two agents in one checkout must not share a run: give the second one `VERIFY_RUN=<its run dir>` on every call. Never point a drive at port 8789 or at an installed receiver; that store holds real records. With `--tailnet` the receiver is reachable by other tailnet devices for as long as the run is up, so keep tailnet runs short and stop them with `down`.
+Pinning `VERIFY_RUN` is what keeps runs apart. Without it, commands fall back to the checkout's current-run pointer, which the latest `verify new` in that checkout moves. Agents in separate worktrees have separate pointers. Agents sharing a checkout are safe only if every one of them pins its own `VERIFY_RUN`. `verify new` refuses while `VERIFY_RUN` is set, so unset it to start another run. Never point a drive at port 8789 or at an installed receiver; that store holds real records. With `--tailnet` the receiver is reachable by other tailnet devices for as long as the run is up, so keep tailnet runs short and stop them with `down`.
 
 ## Doctor
 
@@ -47,7 +47,7 @@ Read-only. It checks:
 - That each started component is still the process this run started, matched by pid plus start time.
 - That the receiver answers `ok` from a store inside the run directory.
 - That the edge redirects anonymous callers to `/cdn-cgi/access/login`.
-- That the Worker's `/healthz` reports `verify-<HEAD>`. A Worker started before the checkout moved fails this.
+- That the Worker's `/healthz` reports `verify-<HEAD>`, and that the edge runs the current `build/worker.js`. A Worker started before the checkout moved or before a rebuild fails this; `verify up` restarts such an edge.
 
 Run it before the first drive, after any failed drive and whenever something looks off. Exit 0 and `doctor: ok` mean the run is worth driving.
 
