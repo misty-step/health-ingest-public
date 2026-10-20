@@ -1,9 +1,9 @@
-$ sh -c "\"$SKILL/scripts/verify\" r2 raw/hevy/ | grep -c \"\\\"key\\\"\"; tail -2 \"$VERIFY_RUN/hevy/requests.jsonl\""
-started: 2026-10-20T21:57:55+00:00
+$ sh -c '"$SKILL/scripts/verify" r2 raw/hevy/ | grep -c "\"key\""; tail -2 "$VERIFY_RUN/hevy/requests.jsonl"'
+started: 2026-10-20T22:22:40+00:00
 exit: 0
 --- stdout
 22
-{"method": "GET", "path": "/v1/workouts/events", "query": {"page": "1", "pageSize": "10", "since": "2026-10-20T21:57:52.307Z"}, "api_key_ok": true, "mode": "normal", "status": 200}
-{"method": "GET", "path": "/v1/workouts/events", "query": {"page": "2", "pageSize": "10", "since": "2026-10-20T21:57:52.307Z"}, "api_key_ok": true, "mode": "normal", "status": 200}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"page": "1", "pageSize": "10", "since": "2026-10-20T22:22:31.362Z"}, "api_key_ok": true, "mode": "normal", "status": 200}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"page": "2", "pageSize": "10", "since": "2026-10-20T22:22:31.362Z"}, "api_key_ok": true, "mode": "normal", "status": 200}
 --- stderr
 

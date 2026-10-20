@@ -1,0 +1,8 @@
+$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/private/writer_curl.conf -H 'Content-Type: application/json' -H 'Transfer-Encoding: chunked' -d '{}' http://127.0.0.1:33765/ingest/synthetic
+started: 2026-10-20T22:22:25+00:00
+exit: 0
+--- stdout
+{"error":"Content-Length required"}
+411
+--- stderr
+

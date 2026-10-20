@@ -1,5 +1,5 @@
-$ curl -sS -w \n%{http_code}\n -H "CF-Access-Client-Id: synthetic-writer.access" -H "CF-Access-Client-Secret: synthetic-writer-secret" -X POST -d "" http://127.0.0.1:44653/internal/hevy-poll
-started: 2026-10-20T21:58:09+00:00
+$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/private/writer_curl.conf -X POST -d '' http://127.0.0.1:37559/internal/hevy-poll
+started: 2026-10-20T22:22:48+00:00
 exit: 0
 --- stdout
 

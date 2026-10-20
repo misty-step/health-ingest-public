@@ -1,8 +1,8 @@
-$ curl -sS -w \n%{http_code}\n -H "CF-Access-Client-Id: synthetic-writer.access" -H "CF-Access-Client-Secret: synthetic-writer-secret" -H "Content-Type: application/json" -d {\"fictional\":true,\"n\":1} http://127.0.0.1:36283/ingest/synthetic
-started: 2026-10-20T21:57:48+00:00
+$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/private/writer_curl.conf -H 'Content-Type: application/json' -d '{"fictional":true,"n":1}' http://127.0.0.1:33765/ingest/synthetic
+started: 2026-10-20T22:22:21+00:00
 exit: 0
 --- stdout
-{"status":"ok","source":"synthetic","stored":"raw/synthetic/d89e93944ba5d10e10f99f007815157cf3a408990c3f0b18c203e9f266a074e6","bytes":24,"sha256":"d89e93944ba5d10e10f99f007815157cf3a408990c3f0b18c203e9f266a074e6","received_at":"2026-10-20T21:57:47.228Z"}
+{"status":"ok","source":"synthetic","stored":"raw/synthetic/d89e93944ba5d10e10f99f007815157cf3a408990c3f0b18c203e9f266a074e6","bytes":24,"sha256":"d89e93944ba5d10e10f99f007815157cf3a408990c3f0b18c203e9f266a074e6","received_at":"2026-10-20T22:22:20.727Z"}
 200
 --- stderr
 

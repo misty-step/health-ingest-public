@@ -1,9 +1,9 @@
-$ sh -c "cd \"$NATIVE_DATA\" && find raw/artoo -name snapshot.tar.gz | sort; sha256sum \"$1\"" _ ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/fixed.tar.gz
-started: 2026-10-20T21:57:40+00:00
+$ sh -c 'cd "$NATIVE_DATA" && find raw/artoo -name snapshot.tar.gz | sort; sha256sum "$1"' _ ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/fixed.tar.gz
+started: 2026-10-20T22:22:10+00:00
 exit: 0
 --- stdout
 raw/artoo/2026-10-20/314dab5d8dbe2fae0c8b284aa6e02381f955056bb60938d1b8566822e8435539/snapshot.tar.gz
-raw/artoo/2026-10-20/7c8b7e3b48e789a72e818a96b9ae01da63a321fbf4e3ded6ac0d89483e481cb5/snapshot.tar.gz
-314dab5d8dbe2fae0c8b284aa6e02381f955056bb60938d1b8566822e8435539  ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/fixed.tar.gz
+raw/artoo/2026-10-20/4d5054e9de0031d63bd136d84c5200e911a8176b8ee08742966ebf6a2c21e751/snapshot.tar.gz
+314dab5d8dbe2fae0c8b284aa6e02381f955056bb60938d1b8566822e8435539  ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/fixed.tar.gz
 --- stderr
 

@@ -1,5 +1,5 @@
-$ sh -c "\"$SKILL/scripts/verify\" r2 state/; \"$SKILL/scripts/verify\" r2 raw/hevy/ | grep -c \"\\\"key\\\"\""
-started: 2026-10-20T21:57:52+00:00
+$ sh -c '"$SKILL/scripts/verify" r2 state/; "$SKILL/scripts/verify" r2 raw/hevy/ | grep -c "\"key\""'
+started: 2026-10-20T22:22:34+00:00
 exit: 0
 --- stdout
 {
@@ -7,7 +7,7 @@ exit: 0
     {
       "key": "state/hevy.json",
       "bytes": 36,
-      "sha256": "6733abcd84764d655c85012b283acd67db3385a4368eae0069beef445a474546"
+      "sha256": "e7ae14e25173eb6ac80477c723c3b5d3f4251e635f8ddb0e82feb2962e8e4da4"
     }
   ],
   "truncated": false

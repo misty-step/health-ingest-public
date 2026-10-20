@@ -1,5 +1,5 @@
-$ curl -sS -w \n%{http_code}\n -H "Authorization: Bearer synthetic-artoo-token" -H "Content-Type: application/json" --data-binary @~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/fixed.tar.gz http://100.x.y.z:51869/artoo/snapshot
-started: 2026-10-20T21:57:40+00:00
+$ curl -sS -w '\n%{http_code}\n' -H 'Authorization: Bearer synthetic-artoo-e6d1fdb3b30bceb8' -H 'Content-Type: application/json' --data-binary @~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/fixed.tar.gz http://100.x.y.z:58113/artoo/snapshot
+started: 2026-10-20T22:22:11+00:00
 exit: 0
 --- stdout
 application/gzip required

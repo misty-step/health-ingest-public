@@ -1,9 +1,9 @@
 $ .agents/skills/verify-health-ingest/scripts/verify up --tailnet
-started: 2026-10-20T21:56:39+00:00
+started: 2026-10-20T22:19:48+00:00
 exit: 0
 --- stdout
-native receiver ready at http://100.x.y.z:51869 (store ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/native/data)
-fictional Hevy API ready at http://127.0.0.1:41325
-local Worker ready: edge http://127.0.0.1:55443, origin http://127.0.0.1:54165, control http://127.0.0.1:47213
+native receiver ready at http://100.x.y.z:58113 (store ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/native/data)
+fictional Hevy API ready at http://127.0.0.1:51625
+local Worker ready: edge http://127.0.0.1:60917, origin http://127.0.0.1:54245, control http://127.0.0.1:44255
 --- stderr
 

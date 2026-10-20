@@ -1,0 +1,9 @@
+$ curl -sS -w '\n%{http_code}\n' -H 'Authorization: Bearer wrong' -d '{"fictional":1}' http://100.x.y.z:58113/ingest/synthetic
+started: 2026-10-20T22:22:04+00:00
+exit: 0
+--- stdout
+forbidden
+
+403
+--- stderr
+

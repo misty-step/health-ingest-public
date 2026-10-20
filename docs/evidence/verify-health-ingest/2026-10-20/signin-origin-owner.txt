@@ -1,0 +1,8 @@
+$ curl -sS -w '\n%{http_code}\n' -H 'Cf-Access-Jwt-Assertion: eyJhbGciOiJSUzI1NiIsImtpZCI6InN5bnRoZXRpYy12ZXJpZnkifQ.eyJzdWIiOiJzeW50aGV0aWMtc2lnbmVkIiwiZW1haWwiOiJmaWN0aW9uYWwtb3duZXJAZXhhbXBsZS5pbnZhbGlkIiwiaXNzIjoiaHR0cHM6Ly9zeW50aGV0aWMtdmVyaWZ5LmNsb3VkZmxhcmVhY2Nlc3MuY29tIiwiYXVkIjoic3ludGhldGljLXZlcmlmeS1hdWRpZW5jZSIsImlhdCI6MTc5MjUzNDkzOCwiZXhwIjoxNzkyNTM1MjM4fQ.BQqWDIcUEzGbfcnSM1j2nTTHmSa9xa1sqQVegVgr9CtNPlrBsEFEpiC72Wc9a_UuDz5ol7lDXfM3u0FJPUdbey5d1WKQfAyCJT1VRDlieUiqDb70Q7clDWOkxGo5rx9SsEHGoMymX35XwZUk_OoDvQh3gE-SfrMnRO67zXkNeXIUST_VmF5oQL0HhvSWmVMTkttn8e79SB8AeczPbBOXQoWgYJ_ucUdX7awJxfMUq8tamFVKIFVGJyKw4MmiHQo1W6IRnaZopiywuhkmmHWxrEgO-Q2croQIjcjGUxEwYj5yaCKZLYT7bhKeO2EFilDF4yG51dbMthFy9EqAcY5qZg' http://127.0.0.1:43659/healthz
+started: 2026-10-20T22:22:18+00:00
+exit: 0
+--- stdout
+{"ok":false,"revision":"verify-4e612172c15c","reason":"hevy_never_polled"}
+503
+--- stderr
+

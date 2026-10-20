@@ -1,5 +1,5 @@
-$ python3.14 ~/.t3/worktrees/health-ingest-public/verify-verification-skill/.agents/skills/verify-health-ingest/scripts/sync_hevy_stubbed.py --hevy-url http://127.0.0.1:41325 -- --poll --ingest-url http://100.x.y.z:51869
-started: 2026-10-20T21:57:45+00:00
+$ python3.14 ~/.t3/worktrees/health-ingest-public/verify-verification-skill/.agents/skills/verify-health-ingest/scripts/sync_hevy_stubbed.py --hevy-url http://127.0.0.1:51625 -- --poll --ingest-url http://100.x.y.z:58113
+started: 2026-10-20T22:22:17+00:00
 exit: 2
 --- stdout
 

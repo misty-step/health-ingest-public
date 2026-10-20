@@ -1,10 +1,10 @@
-$ .agents/skills/verify-health-ingest/scripts/verify down
-started: 2026-10-20T21:59:36+00:00
+$ env VERIFY_RUN=~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835 .agents/skills/verify-health-ingest/scripts/verify down
+started: 2026-10-20T22:24:14+00:00
 exit: 0
 --- stdout
-stopped native (pid 4083981)
-stopped hevy (pid 4084095)
-stopped edge (pid 4117618)
-evidence kept at ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/evidence
+stopped native (pid 898930)
+stopped hevy (pid 760010)
+stopped edge (pid 879830)
+evidence kept at ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/evidence
 --- stderr
 

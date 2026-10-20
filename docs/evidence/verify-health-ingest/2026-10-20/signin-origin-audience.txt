@@ -1,0 +1,8 @@
+$ curl -sS -w '\n%{http_code}\n' -H 'Cf-Access-Jwt-Assertion: eyJhbGciOiJSUzI1NiIsImtpZCI6InN5bnRoZXRpYy12ZXJpZnkifQ.eyJzdWIiOiJzeW50aGV0aWMtc2lnbmVkIiwiZW1haWwiOiJmaWN0aW9uYWwtb3duZXJAZXhhbXBsZS5pbnZhbGlkIiwiaXNzIjoiaHR0cHM6Ly9zeW50aGV0aWMtdmVyaWZ5LmNsb3VkZmxhcmVhY2Nlc3MuY29tIiwiYXVkIjoid3JvbmciLCJpYXQiOjE3OTI1MzQ5MzgsImV4cCI6MTc5MjUzNTIzOH0.fwle-ckwJNVIdJwY6Oz8gjgxJlcwAROSTmx1alqAJTm9Q9G5DSUdefYyd_SPKEx5qFS2nB9nPBHZ90GsuPXYAkcxWyTkgs7i5Fdz06NXJcAhaQp6H5LUJulac27JL3iJzBJ63e7pG2FGI1uiCYhWD7-7ufgcJFCAizCNKiLRCNTA4l8RcbP3gPuQa-gaxh3ePkSYt678IbADnXmrRWrzuu6kX3VQwltIIaIPglrnhGDeIuvEly-fjkegA0_54w7oiBig_J5UXwc_fjx824R81zQbaybuv3_jICUxU4zyy3z9R0nVzG4cufubAHEdHvSwPnPkFvmcKPdijKer6keaoA' http://127.0.0.1:43659/healthz
+started: 2026-10-20T22:22:18+00:00
+exit: 0
+--- stdout
+{"error":"forbidden"}
+403
+--- stderr
+

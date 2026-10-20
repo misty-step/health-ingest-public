@@ -1,5 +1,5 @@
-$ curl -sS -w \n%{http_code}\n -H "CF-Access-Client-Id: synthetic-poller.access" -H "CF-Access-Client-Secret: synthetic-poller-secret" http://127.0.0.1:36283/healthz
-started: 2026-10-20T21:57:46+00:00
+$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/private/poller_curl.conf http://127.0.0.1:33765/healthz
+started: 2026-10-20T22:22:19+00:00
 exit: 0
 --- stdout
 {"error":"forbidden"}

@@ -1,7 +1,0 @@
-$ curl -sS -o /dev/null -w "%{http_code} %{redirect_url}\n" -H "Cf-Access-Jwt-Assertion: forged" http://127.0.0.1:36283/healthz
-started: 2026-10-20T21:57:46+00:00
-exit: 0
---- stdout
-302 http://127.0.0.1:36283/cdn-cgi/access/login?redirect_url=%2Fhealthz
---- stderr
-
