@@ -15,8 +15,11 @@
 //   GET  /cdn-cgi/access/logout                           clears it.
 // Origin (127.0.0.1:<origin-port>): the Worker itself, no edge. Only for the
 //   "bypass Access with a forged assertion" journey.
-// Control (127.0.0.1:<control-port>), verification-only second view of storage:
-//   GET /r2?prefix=P  lists keys, bytes and SHA256 of stored objects.
+// Control (127.0.0.1:<control-port>), verification-only:
+//   GET  /r2?prefix=P  lists keys, bytes and SHA256 of stored objects (second view of storage).
+//   POST /sign {email|client_id, issuer?, audience?, ttl?, iat_offset?} returns an assertion
+//        signed with this run's key, so the Worker's own issuer/audience/time checks can be
+//        driven directly at the origin port.
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
@@ -68,9 +71,12 @@ try {
   jwk = { ...await exportJWK(pair.publicKey), kid: 'synthetic-verify', alg: 'RS256', use: 'sig' };
   await writeFile(keyFile, JSON.stringify({ private: await exportJWK(pair.privateKey), public: jwk }), { mode: 0o600 });
 }
-const sign = (claims, ttl) => new SignJWT(claims).setProtectedHeader({ alg: 'RS256', kid: 'synthetic-verify' })
-  .setIssuer(ISSUER).setAudience(AUD).setIssuedAt().setExpirationTime(Math.floor(Date.now() / 1000) + ttl)
-  .sign(privateKey);
+const sign = (claims, ttl, { issuer = ISSUER, audience = AUD, iatOffset = 0 } = {}) => {
+  const now = Math.floor(Date.now() / 1000);
+  return new SignJWT(claims).setProtectedHeader({ alg: 'RS256', kid: 'synthetic-verify' })
+    .setIssuer(issuer).setAudience(audience).setIssuedAt(now + iatOffset).setExpirationTime(now + ttl)
+    .sign(privateKey);
+};
 
 const script = await readFile(path.join(repo, 'cloudflare', 'build', 'worker.js'), 'utf8');
 const vars = {
@@ -147,9 +153,12 @@ const edge = createServer(async (req, res) => {
     const assertion = await assertionFor(req);
     if (!assertion) { req.resume(); redirectToLogin(res, url); return; }
     const headers = { ...req.headers };
-    for (const name of ['host', 'cf-access-client-id', 'cf-access-client-secret', 'cf-access-jwt-assertion', 'cookie', 'connection']) delete headers[name];
+    for (const name of ['host', 'cf-access-client-id', 'cf-access-client-secret', 'cf-access-jwt-assertion', 'cookie',
+      'connection', 'transfer-encoding']) delete headers[name];
     headers['cf-access-jwt-assertion'] = assertion;
-    const hasBody = !['GET', 'HEAD'].includes(req.method);
+    // A chunked request arrives with no Content-Length and is forwarded the same way,
+    // so the Worker's own 411 answers it; an explicit Content-Length: 0 stays as sent.
+    const hasBody = !['GET', 'HEAD'].includes(req.method) && headers['content-length'] !== '0';
     const response = await fetch(new URL(url.pathname + url.search, origin), {
       method: req.method, headers, body: hasBody ? req : undefined, duplex: hasBody ? 'half' : undefined, redirect: 'manual',
     });
@@ -164,6 +173,16 @@ const edge = createServer(async (req, res) => {
 
 const control = createServer(async (req, res) => {
   const url = new URL(req.url, 'http://control.invalid');
+  if (req.method === 'POST' && url.pathname === '/sign') {
+    const chunks = [];
+    for await (const chunk of req) chunks.push(chunk);
+    const claims = JSON.parse(Buffer.concat(chunks).toString() || '{}');
+    const subject = claims.email ? { sub: 'synthetic-signed', email: claims.email } : { sub: '', common_name: claims.client_id };
+    const jwt = await sign(subject, claims.ttl ?? 300,
+      { issuer: claims.issuer, audience: claims.audience, iatOffset: claims.iat_offset ?? 0 });
+    res.writeHead(200, { 'Content-Type': 'text/plain' }).end(jwt);
+    return;
+  }
   if (req.method !== 'GET' || url.pathname !== '/r2') { res.writeHead(404).end(); return; }
   const bucket = await mf.getR2Bucket('DATA');
   const listing = await bucket.list({ prefix: url.searchParams.get('prefix') || '' });

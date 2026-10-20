@@ -4,8 +4,9 @@ This directory is the maintained source for verifying what callers of the public
 
 ## Baseline preconditions
 
-- `cloudflare/node_modules` is installed and `cloudflare/build/worker.js` is fresh (`cd cloudflare && npm ci --ignore-scripts && npm run build`).
-- `V=.agents/skills/verify-health-ingest/scripts/verify`, then `$V new`, `$V up --tailnet` and `eval "$($V env)"` in the shell that drives.
+- `cloudflare/node_modules` is installed and `cloudflare/build/` is fresh (SKILL.md "Launch").
+- A run exists and is up: `.agents/skills/verify-health-ingest/scripts/verify new`, then `... up --tailnet`.
+- Every tool call starts with `eval "$(.agents/skills/verify-health-ingest/scripts/verify env)"`, because each call is a fresh shell. All `$NAME` values below come from it.
 - `$V doctor` ends with `doctor: ok`.
 - Commands run from the repository root with `python3.14`.
 - Never drive an instance this run did not start, port 8789, or any installed receiver or deployed Worker.
@@ -14,7 +15,7 @@ This directory is the maintained source for verifying what callers of the public
 
 - Each recipe starts from the baseline state unless its preconditions say otherwise. Recipes may share one run; a recipe that needs an untouched store says so.
 - Wrap each proving command in `$V rec <feature>-<step> -- <command>`. Use `sh -c '...'` for pipelines.
-- Treat commands as literal. The `$NAME` values come from `verify env` and are all synthetic.
+- Treat commands as literal. The `$NAME` values come from `verify env` and are all synthetic. Variables a recipe defines itself live only for that call.
 - Switch the fictional Hevy API back to `normal` after any failure mode.
 - The second view of a write is the receiver's files under `$NATIVE_DATA`, `$V r2` for the Worker, the cursor file, or `$VERIFY_RUN/hevy/requests.jsonl`.
 

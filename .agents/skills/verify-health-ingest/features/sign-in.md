@@ -7,9 +7,10 @@ The Cloudflare Worker trusts no caller on its own. Cloudflare Access signs each 
 - `owner-session` signs the owner in and lands on `/healthz` with Worker JSON, `revision: verify-<sha>`.
 - `signed-out` gives anonymous requests a `302` to `/cdn-cgi/access/login` with no Worker body.
 - `wrong-identity` gives a signed-in stranger email `403 {"error":"forbidden"}` from the Worker.
-- `expired-session` sends a session past its expiry back to login.
+- `expired-session` sends a session past its expiry back to login at the edge.
 - `logout` makes the next request redirect to login.
-- `forged-assertion` has the edge strip a client-supplied `Cf-Access-Jwt-Assertion`, and the Worker origin refuse a forged one sent directly with 403.
+- `origin-checks` has the Worker itself refuse, at the bare origin, assertions that are correctly signed but expired, from the wrong issuer, for the wrong audience, or issued in the future. A valid owner or pinned-machine assertion passes. A forged unsigned one is refused.
+- `assertion-stripped` has the edge drop a client-supplied `Cf-Access-Jwt-Assertion`, even a valid one, so only Access-minted assertions reach the Worker.
 - `unpinned-machine` gets 403 from the Worker for a token the edge accepts but `ACCESS_MACHINES` does not pin. A wrong token secret is redirected by the edge.
 - `poller-scope` gets 403 when the poll-only identity reads health.
 
@@ -23,24 +24,33 @@ The Cloudflare Worker trusts no caller on its own. Cloudflare Access signs each 
 
 Preconditions:
 
-- `hevy` and `edge` are up and `$V doctor` passes. Use a fresh cookie jar: `J=$VERIFY_RUN/owner.jar; rm -f "$J"`.
+- `hevy` and `edge` are up and `$V doctor` passes. `$J` is this run's owner cookie jar; start with `rm -f "$J"`.
 
 - **Signed out.** Run `$V rec signin-signed-out -- curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' "$EDGE_URL/healthz"`. It prints `302 http://127.0.0.1:<port>/cdn-cgi/access/login?redirect_url=%2Fhealthz`.
 - **Owner signs in.** Run `$V rec signin-owner -- curl -sS -L -c "$J" -b "$J" -w '\n%{http_code} %{url_effective}\n' "$EDGE_URL/cdn-cgi/access/login?email=$OWNER_EMAIL&redirect_url=%2Fhealthz"`. The final URL is `/healthz` and the body is Worker JSON with `"revision":"$RELEASE"`. Status is `503` with `hevy_never_polled` before any poll, or `200` after a fresh poll. Both prove an owner session; a 403 or a redirect does not.
-- **Session persists.** Run `$V rec signin-owner-session -- curl -sS -b "$J" -w '\n%{http_code}\n' "$EDGE_URL/healthz"`. It returns the same JSON without logging in again, and `grep CF_Authorization "$J"` shows the cookie.
-- **Wrong identity.** Sign in with `email=$STRANGER_EMAIL` into a second jar, then GET `/healthz` with it as `signin-wrong-identity`. The status is `403` and the body is `{"error":"forbidden"}`.
-- **Expired session.** Sign in with `&ttl=-60` into a third jar, then GET `/healthz` as `signin-expired`. The status is `302` to `/cdn-cgi/access/login`.
-- **Logout.** GET `$EDGE_URL/cdn-cgi/access/logout` with `-b "$J" -c "$J"`, then `/healthz` with the jar as `signin-logout`. The status is `302` to login.
-- **Forged assertion.** Run `curl -sS -w '\n%{http_code}\n' -H 'Cf-Access-Jwt-Assertion: forged' "$EDGE_URL/healthz"` as `signin-forged-edge`, which gives `302` because the edge strips it. Then send a hand-made assertion straight to the Worker as `signin-forged-origin`: `curl -sS -w '\n%{http_code}\n' -H 'Cf-Access-Jwt-Assertion: eyJhbGciOiJub25lIn0.eyJlbWFpbCI6ImZpY3Rpb25hbC1vd25lckBleGFtcGxlLmludmFsaWQifQ.' "$ORIGIN_URL/healthz"`. That gives `403 {"error":"forbidden"}`.
+- **Session persists.** Run `$V rec signin-owner-session -- curl -sS -b "$J" -w '\n%{http_code}\n' "$EDGE_URL/healthz"`. It returns the same JSON without logging in again, and `grep -c CF_Authorization "$J"` prints `1`.
+- **Wrong identity.** Run `curl -sS -o /dev/null -c "$J.stranger" "$EDGE_URL/cdn-cgi/access/login?email=$STRANGER_EMAIL"`, then GET `/healthz` with `-b "$J.stranger"` as `signin-wrong-identity`. The status is `403` and the body is `{"error":"forbidden"}`.
+- **Expired session.** Sign in with `&ttl=-60` into `$J.expired`, then GET `/healthz` with it as `signin-expired`. The status is `302` to `/cdn-cgi/access/login`.
+- **Logout.** Run `cp "$J" "$J.keep"`, then GET `$EDGE_URL/cdn-cgi/access/logout` with `-b "$J" -c "$J"`, then `/healthz` with `-b "$J"` as `signin-logout`. The status is `302` to login. `$J.keep` is still signed in for [cloudflare-ingest.md](./cloudflare-ingest.md).
+- **Worker's own checks.** Send correctly signed assertions straight to the Worker. Each is `curl -sS -w '\n%{http_code}\n' -H "Cf-Access-Jwt-Assertion: $($V assertion <flags>)" "$ORIGIN_URL/healthz"`:
+  - `signin-origin-owner`: `--email "$OWNER_EMAIL"` gives Worker JSON with `$RELEASE`.
+  - `signin-origin-machine`: `--client-id "$WRITER_ID"` gives Worker JSON.
+  - `signin-origin-expired`: `--email "$OWNER_EMAIL" --ttl -60` gives `403 {"error":"forbidden"}`.
+  - `signin-origin-issuer`: `--email "$OWNER_EMAIL" --issuer https://wrong.cloudflareaccess.com` gives `403`.
+  - `signin-origin-audience`: `--email "$OWNER_EMAIL" --audience wrong` gives `403`.
+  - `signin-origin-future`: `--email "$OWNER_EMAIL" --iat-offset 300` gives `403`.
+  - `signin-origin-stranger`: `--email "$STRANGER_EMAIL"` gives `403`.
+  - `signin-origin-forged`: the literal unsigned `eyJhbGciOiJub25lIn0.eyJlbWFpbCI6ImZpY3Rpb25hbC1vd25lckBleGFtcGxlLmludmFsaWQifQ.` gives `403`.
+- **Assertion stripped at the edge.** Run `$V rec signin-edge-strips -- sh -c 'curl -sS -o /dev/null -w "%{http_code} %{redirect_url}\n" -H "Cf-Access-Jwt-Assertion: $("$V" assertion --email "$OWNER_EMAIL")" "$EDGE_URL/healthz"'`. It prints `302` to login: the same assertion the origin accepted is ignored when a client supplies it.
 - **Machine identities.** Record GET `/healthz` with:
-  - `-H "CF-Access-Client-Id: $UNPINNED_ID" -H "CF-Access-Client-Secret: $UNPINNED_SECRET"` as `signin-unpinned`: `403`.
-  - the writer ID with secret `wrong` as `signin-bad-secret`: `302` to login.
-  - `$POLLER_ID`/`$POLLER_SECRET` as `signin-poller-health`: `403`.
-  - `$WRITER_ID`/`$WRITER_SECRET` as `signin-writer-health`: Worker JSON with `$RELEASE`.
+  - `-K "$UNPINNED_CURL"` as `signin-unpinned`: `403`.
+  - `-H "CF-Access-Client-Id: $WRITER_ID" -H "CF-Access-Client-Secret: wrong"` as `signin-bad-secret`: `302` to login.
+  - `-K "$POLLER_CURL"` as `signin-poller-health`: `403`.
+  - `-K "$WRITER_CURL"` as `signin-writer-health`: Worker JSON with `$RELEASE`.
 
 ## Gotchas
 
-- This is an emulation, not Cloudflare Access. The local login accepts any email; the real Access policy would refuse a stranger before the Worker. Here the Worker's own pin is what refuses the stranger, which is the origin check this feature exists to prove.
-- The real owner, phaedrus, signs in to the deployed Worker through Access and the Misty Step password IdP. That journey, and whether it is proven, belong to the private repo's `verify-health-ingest` skill, not to this one.
+- This is an emulation, not Cloudflare Access. The local login accepts any email, and session expiry is enforced by the edge, as Access does. The Worker's own identity, issuer, audience and time checks are proven only by the `signin-origin-*` steps, so do not drop them.
+- `$V assertion` signs with the run's edge key, which the Worker trusts through the emulated JWKS. It is a verification tool for the origin port only. Nothing it prints is valid anywhere else.
 - Signing keys are generated per run and kept in `<run>/edge/signing-key.json`, so sessions survive an edge restart within one run but never across runs. `verify down` deletes the keys.
-- `/healthz` answering `503 hevy_never_polled` or `hevy_stale` is a signed-in success: the body comes from the Worker. Only `200`/`503` with `revision` proves the session; `302` and `403` do not.
+- `/healthz` answering `503 hevy_never_polled` or `hevy_stale` is a signed-in success, because the body comes from the Worker. Only `200`/`503` with `revision` proves the session; `302` and `403` do not.

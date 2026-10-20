@@ -13,7 +13,7 @@ POST /__mode/<mode> switches behavior for later requests:
   partial    page 2 answers 503
   malformed  {"page_count": 1} with no items key
   transient  the next two requests answer 503, then normal
-  redirect   302 to another origin
+  redirect   302 to /__redirected on this stub; any request there is logged, so a follow is visible
   down       every request answers 503
 """
 import argparse
@@ -83,6 +83,10 @@ def build_handler(log_path):
             if url.path == "/__mode":
                 self._send(200, {"mode": State.mode})
                 return
+            if url.path == "/__redirected":
+                self._record(410)
+                self._send(410, {"error": "redirect was followed"})
+                return
             if url.path not in ("/v1/workouts", "/v1/workouts/events"):
                 self._record(404)
                 self._send(404, {"error": "not found"})
@@ -105,7 +109,8 @@ def build_handler(log_path):
                 return
             if mode == "redirect":
                 self._record(302)
-                self._send(302, None, {"Location": "https://redirect.example.invalid/steal"})
+                port = self.server.server_address[1]
+                self._send(302, None, {"Location": f"http://127.0.0.1:{port}/__redirected"})
                 return
             if mode == "malformed":
                 self._record(200)

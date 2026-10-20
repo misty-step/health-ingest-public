@@ -21,10 +21,10 @@ An external scheduler runs `scripts/poll_cloudflare_hevy.py` hourly. The script 
 Preconditions:
 
 - `hevy` and `edge` are up, `$V doctor` passes and `$V hevy-mode normal` is set. No poll has run in this run's edge: `$V r2 state/` lists nothing.
-- `eval "$($V fixtures poller-headers)"; export HEALTH_INGEST_POLL_URL=$EDGE_URL/internal/hevy-poll`.
-- `WR=(-H "CF-Access-Client-Id: $WRITER_ID" -H "CF-Access-Client-Secret: $WRITER_SECRET")` reads health.
+- `$V fixtures poller-headers` has run. `verify env` exports `HEALTH_INGEST_POLL_URL` (`$EDGE_URL/internal/hevy-poll`) and `HEALTH_INGEST_POLLER_HEADERS_FILE`.
+- `curl -K "$WRITER_CURL"` reads health, and `curl -K "$POLLER_CURL"` acts as the poller.
 
-- **Never polled.** Run `$V rec poll-health-before -- curl -sS -w '\n%{http_code}\n' "${WR[@]}" "$EDGE_URL/healthz"`. The status is `503` with `"reason":"hevy_never_polled"`.
+- **Never polled.** Run `$V rec poll-health-before -- curl -sS -w '\n%{http_code}\n' -K "$WRITER_CURL" "$EDGE_URL/healthz"`. The status is `503` with `"reason":"hevy_never_polled"`.
 - **First poll.** Run `$V rec poll-first -- python3.14 scripts/poll_cloudflare_hevy.py`. The exit code is `0` with no output.
 - **Fresh health.** Repeat the health GET as `poll-health-after`. The status is `200` with `{"ok":true,"revision":"$RELEASE"}`.
 - **Second view.** Run `$V rec poll-store -- sh -c '"$SKILL/scripts/verify" r2 state/; "$SKILL/scripts/verify" r2 raw/hevy/ | grep -c "\"key\""'`. It shows `state/hevy.json` and `11` records. `requests.jsonl` shows two GETs to `/v1/workouts`.
@@ -33,14 +33,14 @@ Preconditions:
 - **Failure keeps the cursor.** Note the `state/hevy.json` SHA256 from `$V r2 state/`. Run `$V hevy-mode partial`, then the poller as `poll-partial`. The exit code is `1`, stdout is `[CRON_FAILURE] health-ingest Hevy poll failed; inspect the native run, not response content.`, and `state/hevy.json` has the same SHA256. Repeat with `malformed` as `poll-malformed`. Then run `$V hevy-mode normal`.
 - **File and URL refusals.** Record each:
   - `poll-file-mode`: after `chmod 644 "$HEALTH_INGEST_POLLER_HEADERS_FILE"` the run exits `1` with the fixed line. Run `chmod 600` afterwards.
-  - `poll-public-http`: `HEALTH_INGEST_POLL_URL=http://example.com/internal/hevy-poll` exits `1` with the fixed line.
-  - `poll-wrong-path`: `HEALTH_INGEST_POLL_URL=$EDGE_URL/healthz` exits `1` with the fixed line.
-  - `poll-no-url`: `HEALTH_INGEST_POLL_URL=` exits `2` with `HEALTH_INGEST_POLL_URL is required`.
-- **Scope.** Record `curl -sS -w '\n%{http_code}\n' "${WR[@]}" -X POST -d '' "$HEALTH_INGEST_POLL_URL"` as `poll-writer-refused`, which gives `403`. Record a GET with the poller's two headers as `poll-get-refused`, which gives `405` with an empty body.
+  - `poll-public-http`: `env HEALTH_INGEST_POLL_URL=http://example.com/internal/hevy-poll python3.14 scripts/poll_cloudflare_hevy.py` exits `1` with the fixed line.
+  - `poll-wrong-path`: the same with `HEALTH_INGEST_POLL_URL="$EDGE_URL/healthz"` exits `1` with the fixed line.
+  - `poll-no-url`: the same with `HEALTH_INGEST_POLL_URL=` exits `2` with `HEALTH_INGEST_POLL_URL is required`.
+- **Scope.** Record `curl -sS -w '\n%{http_code}\n' -K "$WRITER_CURL" -X POST -d '' "$HEALTH_INGEST_POLL_URL"` as `poll-writer-refused`, which gives `403`. Record `curl -sS -w '\n%{http_code}\n' -K "$POLLER_CURL" "$HEALTH_INGEST_POLL_URL"` as `poll-get-refused`, which gives `405` with an empty body.
 
 ## Gotchas
 
 - Stale health needs a cursor older than two hours, and this harness has no clock control. `hevy_stale` is covered by `npm test`; here, only `hevy_never_polled` and fresh `200` are observable.
 - The transient mode answers 503 twice and then succeeds, inside the Worker's three attempts, so the poll passes. Use it to prove retry, not failure.
-- The emulated edge accepts the poller token. In production the Access policy and the Worker's `ACCESS_MACHINES` pin must both name the same client ID; the private repo's skill checks the deployed side.
+- The emulated edge accepts the poller token. In a deployment, the Access policy and the Worker's `ACCESS_MACHINES` pin must both name the same client ID. Check that against the deployment, not here.
 - The fixed failure line is the whole contract. It carries no status, body or identity by design. Diagnose with `evidence/edge.log` and `requests.jsonl`, never by adding output.

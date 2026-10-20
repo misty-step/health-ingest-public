@@ -21,7 +21,7 @@ Preconditions:
 - `TMPDIR` points at disk, e.g. `export TMPDIR=~/.cache/tmp`, because the Worker suite writes about 100 MB of synthetic objects.
 
 - **Native suite.** Run `$V rec synthetic-native -- python3.14 -m unittest discover -s tests -v`. The exit code is `0` and stderr ends with `OK`.
-- **Worker suite.** Run `$V rec synthetic-worker -- sh -c 'cd cloudflare && npm test'`. The exit code is `0` and the node test summary shows `ℹ fail 0`.
+- **Worker suite.** Run `$V rec synthetic-worker -- sh -c 'cd cloudflare && WRANGLER_SEND_METRICS=false npm test'`. The exit code is `0` and the node test summary shows `ℹ fail 0`.
 
 ## Gotchas
 

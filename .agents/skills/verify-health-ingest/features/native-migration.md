@@ -18,14 +18,15 @@ Before moving a native store into the Worker's R2, an operator audits the quiesc
 
 Preconditions:
 
-- The [native ingest](./native-ingest.md), [Artoo delivery](./artoo-delivery.md) and [Hevy sync](./hevy-sync.md) recipes have run, so `$NATIVE_DATA` holds synthetic JSON days, Artoo archives and a Hevy cursor copy. Run `mkdir -p "$NATIVE_DATA/state" && cp "$VERIFY_RUN/hevy/cursor.json" "$NATIVE_DATA/state/hevy.json"`.
+- The [native ingest](./native-ingest.md), [Artoo delivery](./artoo-delivery.md) and [Hevy sync](./hevy-sync.md) recipes have run, so `$NATIVE_DATA` holds synthetic JSON days and Artoo archives. Copy in the Hevy cursor with `mkdir -p "$NATIVE_DATA/state" && cp "$ST" "$NATIVE_DATA/state/hevy.json"`.
 - Remove the side-file case's `raw/sidecar/` first if its hand-edited file should not count. The audit treats it as opaque, which is also valid.
-- `cloudflare/build/native-store-cli.mjs` exists (`npm run build`).
+- `cloudflare/build/native-store-cli.mjs` is fresh; `$V doctor` checks it.
+- The store is quiesced: run `$V stop native` first. The store stays in place for the audit, and `$V up native` brings the receiver back on it.
 
 - **Audit.** Run `$V rec audit-summary -- node cloudflare/build/native-store-cli.mjs audit --directory "$NATIVE_DATA"`. The exit code is `0` and stdout is one JSON line with `"operation":"audit"` and all six fields. `files` equals `find "$NATIVE_DATA" -type f | wc -l`.
 - **Stable digests.** Repeat as `audit-again`. The digests are identical.
 - **Refusal.** Run `touch "$NATIVE_DATA/raw/.hidden"`, then the audit as `audit-hidden-refused`. The exit code is `1` with the fixed message. Run `rm "$NATIVE_DATA/raw/.hidden"`.
-- **Import without a token.** Run `$V rec import-no-token -- sh -c 'echo | node cloudflare/build/native-store-cli.mjs import --directory "$NATIVE_DATA" --account 00000000000000000000000000000000 --bucket synthetic-records'`. The exit code is `1` with the fixed message.
+- **Import without a token.** The empty stdin line is refused before any network call; a non-empty line would be sent to the Cloudflare token-verify API, so never pipe anything else here. Run `$V rec import-no-token -- sh -c 'echo | node cloudflare/build/native-store-cli.mjs import --directory "$NATIVE_DATA" --account 00000000000000000000000000000000 --bucket synthetic-records'`. The exit code is `1` with the fixed message.
 
 ## Gotchas
 

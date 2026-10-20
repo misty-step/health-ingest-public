@@ -20,25 +20,26 @@ The native receiver is what a JSON client such as Health Auto Export, or the Hev
 
 Preconditions:
 
-- `native` is up and `$V doctor` passes. `$NATIVE_URL`, `$NATIVE_TOKEN` and `$NATIVE_DATA` are set.
-- Daily files are named in the receiver's local timezone: `D=$(date +%F)`.
+- `native` is up and `$V doctor` passes. `$NATIVE_URL`, `$NATIVE_TOKEN`, `$NATIVE_DATA` and `$D` (the UTC day the receiver files under) come from `verify env`.
 
 - **Health probe.** Run `$V rec native-health -- curl -sS -w '\n%{http_code}\n' "$NATIVE_URL/healthz"`. The body is `ok` and the status is `200`.
 - **Refuse without bearer.** Run `$V rec native-no-bearer -- curl -sS -w '\n%{http_code}\n' -H 'Content-Type: application/json' -d '{"fictional":1}' "$NATIVE_URL/ingest/synthetic"`. The body is `forbidden`, the status is `403`, and on a fresh store `ls "$NATIVE_DATA/raw/synthetic"` fails because nothing was written.
 - **Ingest.** Run `$V rec native-ingest -- curl -sS -w '\n%{http_code}\n' -H "Authorization: Bearer $NATIVE_TOKEN" -d '{"fictional":1}' "$NATIVE_URL/ingest/synthetic"`. The status is `200` and the body is `{"status": "ok", "source": "synthetic", "stored": "data/raw/synthetic/<D>.json", "bytes": 15}`.
 - **Replay appends.** Repeat the same POST as `native-replay`. Then run `$V rec native-replay-store -- python3.14 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(len(d), [r["payload"] for r in d])' "$NATIVE_DATA/raw/synthetic/$D.json"`. It prints `2 [{'fictional': 1}, {'fictional': 1}]`.
-- **Refusals.** For each case, record the status and confirm the record count stays `2`:
+- **Wrong bearer.** Run the ingest POST with `-H "Authorization: Bearer wrong"` as `native-wrong-bearer`. The status is `403 forbidden`.
+- **Refusals.** Each of these keeps the valid `-H "Authorization: Bearer $NATIVE_TOKEN"`; without it every case is `403`. Record the status for each and confirm the record count stays `2`:
   - `native-bad-json`: `-d '{bad'` gives `400 invalid JSON: ...`.
+  - `native-empty`: `-X POST -H 'Content-Length: 0'` with no body gives `400 empty body`.
   - `native-chunked`: `-H 'Transfer-Encoding: chunked' -d '{}'` gives `411 Content-Length required`.
   - `native-too-large`: `-H 'Content-Length: 67108865' -d '{}'` gives `413 payload too large`.
   - `native-bad-source`: POST to `/ingest/bad_name` gives `400 invalid source name`.
-  - `native-unknown-route`: `GET /nope` gives `404 not found`.
-- **Side file.** Run `printf 'hand edited' > "$NATIVE_DATA/raw/sidecar/$D.json"` after `mkdir -p "$NATIVE_DATA/raw/sidecar"`. Then POST `{"fictional":2}` to `/ingest/sidecar` as `native-side-file`. The `stored` path ends `<D>.HHMMSS.json`, the original still reads `hand edited`, and `ls "$NATIVE_DATA/raw/sidecar"` shows both files.
+  - `native-unknown-route`: `GET /nope` with no bearer gives `404 not found`.
+- **Side file.** Run `mkdir -p "$NATIVE_DATA/raw/sidecar" && printf 'hand edited' > "$NATIVE_DATA/raw/sidecar/$D.json"`. Then POST `{"fictional":2}` to `/ingest/sidecar` as `native-side-file`. The `stored` path ends `<D>.HHMMSS.json`, the original still reads `hand edited`, and `ls "$NATIVE_DATA/raw/sidecar"` shows both files.
 
 ## Gotchas
 
 - Storage sits next to `server.py`. Only `verify up native`'s copy is safe to drive; a checkout's own `data/` or an installed receiver holds real records.
 - With `--tailnet` the receiver listens only on the tailnet IP, so `127.0.0.1:<port>` refuses connections. Use `$NATIVE_URL`.
-- The day boundary is local time while `received_at` carries an offset. Compute `D` on the same host.
+- The receiver files by its local day. `verify up native` runs it with `TZ=UTC`, so `$D` is the UTC date and `received_at` ends `+00:00`. A run spanning UTC midnight splits across two day files.
 - `curl -d` strips newlines and sets `application/x-www-form-urlencoded`. The receiver ignores content type, so the proof is the stored payload, not the header.
 - The receiver's log in `evidence/native.log` records peer IPs and paths only, never bodies.

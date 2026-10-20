@@ -20,7 +20,7 @@
 Preconditions:
 
 - `native` and `hevy` are up and `$V hevy-mode normal` is set.
-- `export HEVY_API_KEY=$HEVY_KEY HEALTH_INGEST_TOKEN=$NATIVE_TOKEN; ST=$VERIFY_RUN/hevy/cursor.json; SYNC="$SKILL/scripts/sync_hevy_stubbed.py --hevy-url $HEVY_URL --"`.
+- `verify env` exports `HEVY_API_KEY` (the synthetic UUID), `HEALTH_INGEST_TOKEN` (this run's receiver bearer), the cursor path `$ST` and `$SYNC`. `$SYNC` is the real CLI with the stubbed upstream, used as `python3.14 $SYNC <args>`.
 - No cursor exists at `$ST`.
 
 - **Poll needs a cursor.** Run `$V rec hevy-no-cursor -- python3.14 $SYNC --poll --state "$ST" --ingest-url "$NATIVE_URL"`. The exit code is `1`, stderr says `no cursor: run --backfill first`, and `requests.jsonl` has no new line.
@@ -30,10 +30,10 @@ Preconditions:
 - **Empty poll advances.** Run `$V hevy-mode empty`, wait one second, then poll as `hevy-empty`. Stdout is `0 events`, no record is added, and `$ST` advances.
 - **Outage keeps the cursor.** Run `cp "$ST" "$ST.before"` and `$V hevy-mode partial`, wait one second, then poll as `hevy-partial`. The exit code is `1`, stderr says `hevy sync failed: receiver or upstream request refused`, and `cmp "$ST" "$ST.before"` succeeds.
 - **Receiver down keeps the cursor.** Run `$V hevy-mode normal`, then poll with `--ingest-url http://127.0.0.1:1` as `hevy-receiver-down`. The exit code is `1` with the same message, and the cursor is unchanged.
-- **Redirect refused.** Run `$V hevy-mode redirect`, poll as `hevy-redirect`, then `$V hevy-mode normal`. The exit code is `1`, the cursor is unchanged, and no request in `requests.jsonl` goes to another host.
+- **Redirect refused.** Run `$V hevy-mode redirect`, poll as `hevy-redirect`, then `$V hevy-mode normal`. The exit code is `1` and the cursor is unchanged. The stub redirects to its own `/__redirected`, so `grep -c __redirected "$VERIFY_RUN/hevy/requests.jsonl"` printing `0` (exit 1) proves the redirect was not followed.
 - **Configuration refusals.** Record each:
   - `hevy-public-http`: `--ingest-url http://example.com` exits `2` with the HTTPS-or-loopback/tailnet message.
-  - `hevy-bad-key`: `HEVY_API_KEY=nope` exits `1` with `HEVY_API_KEY missing or not a UUID`.
+  - `hevy-bad-key`: `env HEVY_API_KEY=nope python3.14 $SYNC --poll ...` exits `1` with `HEVY_API_KEY missing or not a UUID`.
   - `hevy-no-state`: omitting `--state` exits `2` with `--state or HEALTH_INGEST_STATE_FILE is required`.
 
 ## Gotchas
