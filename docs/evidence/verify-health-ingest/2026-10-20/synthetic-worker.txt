@@ -1,0 +1,76 @@
+$ sh -c "cd cloudflare && npm test"
+started: 2026-10-20T21:56:53+00:00
+exit: 0
+--- stdout
+
+> test
+> npm run build && node --test --test-concurrency=1 test.mjs native-store.test.mjs telemetry.test.mjs
+
+
+> build
+> wrangler deploy --dry-run --outdir build && esbuild native-store-cli.mjs --bundle --platform=node --format=esm --outfile=build/native-store-cli.mjs
+
+
+ ⛅️ wrangler 4.151.0 (update available 4.151.3)
+───────────────────────────────────────────────
+
+Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+Total Upload: 577.08 KiB / gzip: 128.79 KiB
+Your Worker has access to the following bindings:
+Binding                                          Resource                  
+env.DATA (synthetic-records)                     R2 Bucket                 
+env.RELEASE ("unreleased")                       Environment Variable      
+env.ACCESS_ISSUER ("")                           Environment Variable      
+env.ACCESS_AUD ("")                              Environment Variable      
+env.ACCESS_HUMAN_EMAILS ("[]")                   Environment Variable      
+env.ACCESS_MACHINES ("[]")                       Environment Variable      
+
+--dry-run: exiting now.
+▶ native import and reverse recovery through real R2, Worker HTTP and native HTTP
+  ✔ canonical multiplicity, opaque/corrupt history and byte-exact restore survive paged R2 (661.659197ms)
+  ✔ only empty gitkeep leaves are permitted; hidden data and placeholder directories refuse (142.532441ms)
+  ✔ symlinks, unfinished uploads and missing cursor refuse before any commit (10.137027ms)
+  ✔ historical JSON beyond canonical stack depth remains byte-exact opaque history (4874.469796ms)
+  ✔ failed object copy and last commit never claim success; retries recover without deletion (470.059591ms)
+  ✔ an interrupted final-delta commit cannot masquerade as a completed reverse restore (626.70856ms)
+  ✔ a changing source cannot publish a final delta; stable final delta is resumable (453.029667ms)
+  ✔ final delta refuses deleted, truncated or rewritten history and cursor regression (120.867524ms)
+  ✔ real Worker accepts post-import JSON, opaque archive and seeded Hevy events (362.099798ms)
+  ✔ fresh runtime reverse-restores every accepted write and latest cursor; original native serves again (2406.435866ms)
+  ✔ missing, corrupt or traversal-tainted objects publish no restore and leave no staging files (611.525601ms)
+  ✔ a moving Cloudflare writer prevents publication of a stale reverse restore (551.487613ms)
+  ✔ bundled CLI errors reveal no path/content canary and produce no success receipt (28.079849ms)
+✔ native import and reverse recovery through real R2, Worker HTTP and native HTTP (13365.319193ms)
+✔ actual Worker SDK transport is allowlisted, isolated and does not stall on an unavailable sink (1033.120257ms)
+✔ lifecycle refuses accepted-data expiry before mutation and preserves unrelated rules (1.219919ms)
+▶ real workerd: private ingest, streaming persistence, authenticated polling and code recovery
+  ✔ origin validates signed audience, issuer, time and exact tagged identities (429.386374ms)
+  ✔ poll-only identity cannot read or write; writers, humans and unsigned callers cannot poll (30.914514ms)
+  ✔ accepted JSON is immutable, byte-exact and idempotent under concurrent replay (442.580356ms)
+  ✔ malformed JSON/UTF8, absent length, wrong method/type and edge bound refuse without records (93.394182ms)
+  ✔ opaque archive receipt verifies bytes and replay; no raw GET (103.451489ms)
+  ✔ JSON depth 128 accepts split escapes/UTF8; deeper arrays/objects refuse clearly and cleanly (453.526354ms)
+  ✔ 99,999,999-byte JSON string validates and persists without whole-body buffering (9458.354012ms)
+  ✔ authenticated backfill returns 200 only with 11 durable items and a committed cursor (5376.243124ms)
+  ✔ partial poll failure returns empty 503, preserves writes/cursor; retry dedupes (1382.559397ms)
+  ✔ malformed upstream 200 and redirects fail closed without moving the cursor (47.160703ms)
+  ✔ both empty feed shapes advance the cursor without records, including empty backfill (2595.846112ms)
+  ✔ transient GET retries recover; rate limits wait for the next hourly call (51.10085ms)
+  ✔ stale/invalid/future checkpoints fail health, failed poll stays stale, recovery restores 200 (327.74229ms)
+  ✔ overlapping HTTP polls report a lost cursor commit as empty 503, never false 200 (152.633676ms)
+  ✔ code rollback and full runtime restart retain all accepted object bytes and cursor (1977.266056ms)
+  ✔ preview-verifier is rejected in a non-preview runtime (396.844733ms)
+✔ real workerd: private ingest, streaming persistence, authenticated polling and code recovery (24050.875504ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40673.670544
+--- stderr
+
+  build/native-store-cli.mjs  29.6kb
+
+⚡ Done in 11ms

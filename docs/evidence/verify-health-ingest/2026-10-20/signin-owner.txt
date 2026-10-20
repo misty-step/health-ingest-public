@@ -1,0 +1,8 @@
+$ curl -sS -L -c ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/owner.jar -b ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/owner.jar -w "\n%{http_code} %{url_effective}\n" http://127.0.0.1:36283/cdn-cgi/access/login?email=fictional-owner@example.invalid&redirect_url=%2Fhealthz
+started: 2026-10-20T21:57:45+00:00
+exit: 0
+--- stdout
+{"ok":false,"revision":"verify-952fd694087a","reason":"hevy_never_polled"}
+503 http://127.0.0.1:36283/healthz
+--- stderr
+

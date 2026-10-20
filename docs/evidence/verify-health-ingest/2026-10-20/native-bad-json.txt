@@ -1,0 +1,9 @@
+$ curl -sS -w \n%{http_code}\n -H "Authorization: Bearer synthetic-native-token" -d {bad http://100.x.y.z:51869/ingest/synthetic
+started: 2026-10-20T21:57:38+00:00
+exit: 0
+--- stdout
+invalid JSON: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+
+400
+--- stderr
+

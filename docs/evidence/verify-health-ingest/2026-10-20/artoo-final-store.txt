@@ -1,0 +1,8 @@
+$ sh -c "cd \"$NATIVE_DATA\" && find raw/artoo -name snapshot.tar.gz | sort"
+started: 2026-10-20T21:57:40+00:00
+exit: 0
+--- stdout
+raw/artoo/2026-10-20/314dab5d8dbe2fae0c8b284aa6e02381f955056bb60938d1b8566822e8435539/snapshot.tar.gz
+raw/artoo/2026-10-20/7c8b7e3b48e789a72e818a96b9ae01da63a321fbf4e3ded6ac0d89483e481cb5/snapshot.tar.gz
+--- stderr
+

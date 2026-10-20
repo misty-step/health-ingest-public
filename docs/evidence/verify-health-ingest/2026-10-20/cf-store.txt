@@ -1,0 +1,21 @@
+$ .agents/skills/verify-health-ingest/scripts/verify r2 raw/
+started: 2026-10-20T21:57:48+00:00
+exit: 0
+--- stdout
+{
+  "objects": [
+    {
+      "key": "raw/synthetic/d8985f37a88877609c25bc94fd8e80236c94bf78fef8a8d7e632975166e560ad",
+      "bytes": 24,
+      "sha256": "d8985f37a88877609c25bc94fd8e80236c94bf78fef8a8d7e632975166e560ad"
+    },
+    {
+      "key": "raw/synthetic/d89e93944ba5d10e10f99f007815157cf3a408990c3f0b18c203e9f266a074e6",
+      "bytes": 24,
+      "sha256": "d89e93944ba5d10e10f99f007815157cf3a408990c3f0b18c203e9f266a074e6"
+    }
+  ],
+  "truncated": false
+}
+--- stderr
+

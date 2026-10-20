@@ -1,0 +1,7 @@
+$ ls ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/native/data/raw/synthetic
+started: 2026-10-20T21:57:38+00:00
+exit: 2
+--- stdout
+
+--- stderr
+ls: cannot access '~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/native/data/raw/synthetic': No such file or directory

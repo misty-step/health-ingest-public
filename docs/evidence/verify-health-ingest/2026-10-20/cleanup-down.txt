@@ -1,0 +1,10 @@
+$ .agents/skills/verify-health-ingest/scripts/verify down
+started: 2026-10-20T21:59:36+00:00
+exit: 0
+--- stdout
+stopped native (pid 4083981)
+stopped hevy (pid 4084095)
+stopped edge (pid 4117618)
+evidence kept at ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/evidence
+--- stderr
+

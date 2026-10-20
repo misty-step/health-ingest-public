@@ -1,0 +1,20 @@
+$ .agents/skills/verify-health-ingest/scripts/verify doctor
+started: 2026-10-20T21:57:51+00:00
+exit: 0
+--- stdout
+ok   python3.14: Python 3.14.7
+ok   node 26.x: v26.12.0
+ok   repository: ~/.t3/worktrees/health-ingest-public/verify-verification-skill at 952fd694087a9f3183f9267886d291c609f00c3c
+ok   run directory: ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894
+ok   native process ours: pid 4083981
+ok   native port is not the live receiver port
+ok   native store is disposable: ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/native/data
+ok   native /healthz: 200 b'ok\n'
+ok   fictional Hevy process ours: pid 4084095
+ok   fictional Hevy answers: {"mode": "normal"}
+ok   local Worker process ours: pid 4117618
+ok   edge refuses anonymous: 302 /cdn-cgi/access/login?redirect_url=%2Fhealthz
+ok   Worker /healthz revision: 503 {"ok":false,"revision":"verify-952fd694087a","reason":"hevy_never_polled"}
+doctor: ok
+--- stderr
+

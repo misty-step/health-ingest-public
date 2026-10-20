@@ -1,0 +1,8 @@
+$ curl -sS -w \n%{http_code}\n -H "CF-Access-Client-Id: synthetic-writer.access" -H "CF-Access-Client-Secret: synthetic-writer-secret" -H "Content-Type: application/json" -d {\"bad http://127.0.0.1:36283/ingest/synthetic
+started: 2026-10-20T21:57:49+00:00
+exit: 0
+--- stdout
+{"error":"invalid JSON"}
+400
+--- stderr
+

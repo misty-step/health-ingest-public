@@ -1,0 +1,9 @@
+$ curl -sS -w \n%{http_code}\n -H "Authorization: Bearer synthetic-native-token" -d {} http://100.x.y.z:51869/ingest/bad_name
+started: 2026-10-20T21:57:38+00:00
+exit: 0
+--- stdout
+invalid source name
+
+400
+--- stderr
+

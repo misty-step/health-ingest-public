@@ -1,0 +1,8 @@
+$ curl -sS -w \n%{http_code}\n -H "CF-Access-Client-Id: synthetic-writer.access" -H "CF-Access-Client-Secret: synthetic-writer-secret" -H "Content-Type: application/json" -d {\"fictional\":true,\"n\":2} http://127.0.0.1:36283/ingest/synthetic
+started: 2026-10-20T21:57:48+00:00
+exit: 0
+--- stdout
+{"status":"ok","source":"synthetic","stored":"raw/synthetic/d8985f37a88877609c25bc94fd8e80236c94bf78fef8a8d7e632975166e560ad","bytes":24,"sha256":"d8985f37a88877609c25bc94fd8e80236c94bf78fef8a8d7e632975166e560ad","received_at":"2026-10-20T21:57:48.468Z"}
+200
+--- stderr
+

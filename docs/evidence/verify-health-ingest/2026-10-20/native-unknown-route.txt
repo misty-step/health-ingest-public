@@ -1,0 +1,9 @@
+$ curl -sS -w \n%{http_code}\n http://100.x.y.z:51869/nope
+started: 2026-10-20T21:57:39+00:00
+exit: 0
+--- stdout
+not found
+
+404
+--- stderr
+

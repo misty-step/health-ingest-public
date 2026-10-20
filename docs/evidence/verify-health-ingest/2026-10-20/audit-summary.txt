@@ -1,0 +1,7 @@
+$ node cloudflare/build/native-store-cli.mjs audit --directory ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/native/data
+started: 2026-10-20T21:58:10+00:00
+exit: 0
+--- stdout
+{"operation":"audit","files":9,"bytes":7517,"json_records":8,"opaque_files":5,"canonical_sha256":"d19afef406c4e3bfb6ce6e1ee9c0044364669eae8fde3fe131a8ecf929665eb3","bytes_sha256":"5e5b6b7c214347113be563fc93bf499c122c3dca93ee7f71307bcfcc3211f026"}
+--- stderr
+

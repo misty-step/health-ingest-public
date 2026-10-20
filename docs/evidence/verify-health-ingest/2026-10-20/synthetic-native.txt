@@ -1,0 +1,48 @@
+$ python3.14 -m unittest discover -s tests -v
+started: 2026-10-20T21:56:41+00:00
+exit: 0
+--- stdout
+backfill page 1/3: 10 workouts
+backfill page 2/3: 10 workouts
+backfill page 3/3: 3 workouts
+poll since 2026-01-01T00:00:00Z: 0 events
+backfill page 1/3: 10 workouts
+backfill page 2/3: 10 workouts
+backfill page 3/3: 3 workouts
+poll since 2026-01-01T00:00:00Z: 2 events
+--- stderr
+test_body_boundaries_reject_before_storage (test_artoo.LandingTests.test_body_boundaries_reject_before_storage) ... ok
+test_credentials_cannot_cross_into_other_producers (test_artoo.LandingTests.test_credentials_cannot_cross_into_other_producers) ... ok
+test_incomplete_upload_never_publishes_archive_or_receipt (test_artoo.LandingTests.test_incomplete_upload_never_publishes_archive_or_receipt) ... ok
+test_non_tailnet_peer_cannot_upload_even_with_credential (test_artoo.LandingTests.test_non_tailnet_peer_cannot_upload_even_with_credential) ... ok
+test_receipt_matches_bytes_and_repeated_upload_is_immutable (test_artoo.LandingTests.test_receipt_matches_bytes_and_repeated_upload_is_immutable) ... ok
+test_committed_poll_is_silent_and_has_only_named_auth (test_cloudflare_poller.PollerTests.test_committed_poll_is_silent_and_has_only_named_auth) ... ok
+test_denials_redirects_and_false_success_refuse_then_recover (test_cloudflare_poller.PollerTests.test_denials_redirects_and_false_success_refuse_then_recover) ... ok
+test_entrypoint_failure_is_nonzero_and_never_emits_config (test_cloudflare_poller.PollerTests.test_entrypoint_failure_is_nonzero_and_never_emits_config) ... ok
+test_unsafe_file_and_header_configs_refuse_before_network (test_cloudflare_poller.PollerTests.test_unsafe_file_and_header_configs_refuse_before_network) ... ok
+test_artoo_environment_and_flags_are_explicit_and_dns_is_refused (test_configuration.ConfigurationTests.test_artoo_environment_and_flags_are_explicit_and_dns_is_refused) ... ok
+test_artoo_synthetic_archive_delivery_checks_exact_receipt (test_configuration.ConfigurationTests.test_artoo_synthetic_archive_delivery_checks_exact_receipt) ... ok
+test_cloudflare_entrypoint_uses_explicit_endpoint_and_private_file (test_configuration.ConfigurationTests.test_cloudflare_entrypoint_uses_explicit_endpoint_and_private_file) ... ok
+test_explicit_hevy_env_file_must_be_readable (test_configuration.ConfigurationTests.test_explicit_hevy_env_file_must_be_readable) ... ok
+test_hevy_external_settings_and_environment_commit_only_explicit_cursor (test_configuration.ConfigurationTests.test_hevy_external_settings_and_environment_commit_only_explicit_cursor) ... ok
+test_hevy_receiver_redirect_refuses_without_forwarding_or_cursor_change (test_configuration.ConfigurationTests.test_hevy_receiver_redirect_refuses_without_forwarding_or_cursor_change) ... ok
+test_hevy_receiver_url_refused_before_token_or_network (test_configuration.ConfigurationTests.test_hevy_receiver_url_refused_before_token_or_network) ... ok
+test_missing_configuration_never_uses_adjacent_settings_or_store (test_configuration.ConfigurationTests.test_missing_configuration_never_uses_adjacent_settings_or_store) ... ok
+test_acceptance_and_identical_replay_append_exact_synthetic_payload (test_ingest.IngestTests.test_acceptance_and_identical_replay_append_exact_synthetic_payload) ... ok
+test_health_is_exact_non_data_response (test_ingest.IngestTests.test_health_is_exact_non_data_response) ... ok
+test_rejections_write_nothing (test_ingest.IngestTests.test_rejections_write_nothing) ... ok
+test_backfill_gets_every_workout_across_pages_and_sets_cursor (test_sync_hevy.HevyTests.test_backfill_gets_every_workout_across_pages_and_sets_cursor) ... ok
+test_empty_poll_posts_nothing_but_advances (test_sync_hevy.HevyTests.test_empty_poll_posts_nothing_but_advances) ... ok
+test_failed_post_does_not_advance_cursor (test_sync_hevy.HevyTests.test_failed_post_does_not_advance_cursor) ... ok
+test_only_get_with_key_header_and_page_size_cap (test_sync_hevy.HevyTests.test_only_get_with_key_header_and_page_size_cap) ... ok
+test_poll_posts_events_since_cursor_and_advances (test_sync_hevy.HevyTests.test_poll_posts_events_since_cursor_and_advances) ... ok
+test_poll_requires_backfill_cursor (test_sync_hevy.HevyTests.test_poll_requires_backfill_cursor) ... ok
+test_redirect_is_not_followed (test_sync_hevy.HevyTests.test_redirect_is_not_followed) ... /usr/lib/python3.14/tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 302: 'Found'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+ok
+test_write_paths_and_other_endpoints_are_unreachable (test_sync_hevy.HevyTests.test_write_paths_and_other_endpoints_are_unreachable) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 11.960s
+
+OK

@@ -1,0 +1,7 @@
+$ sh -c "find \"$1\" -type f | wc -l" _ ~/.cache/tmp/verify-health-ingest/20261020T215639Z-4083894/native/data
+started: 2026-10-20T21:58:10+00:00
+exit: 0
+--- stdout
+9
+--- stderr
+
