@@ -1,0 +1,19 @@
+name: Offline synthetic checks
+on:
+  workflow_dispatch:
+    inputs:
+      drill:
+        description: Deliberately fail to verify the failure issue
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  dispatcher:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require the source check workflow
+        run: |
+          printf '%s\n' 'Select the source-review ref to run synthetic checks.'
+          exit 1
