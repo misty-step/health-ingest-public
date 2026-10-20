@@ -1,5 +1,5 @@
-$ node cloudflare/build/native-store-cli.mjs audit --directory ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/native/data
-started: 2026-10-20T22:22:49+00:00
+$ node cloudflare/build/native-store-cli.mjs audit --directory ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/native/data
+started: 2026-10-20T22:36:52+00:00
 exit: 1
 --- stdout
 

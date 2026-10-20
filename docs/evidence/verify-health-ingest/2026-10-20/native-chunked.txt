@@ -1,5 +1,5 @@
-$ curl -sS -w '\n%{http_code}\n' -H 'Authorization: Bearer synthetic-native-589d6e4446cc5ed0' -H 'Transfer-Encoding: chunked' -d '{}' http://100.x.y.z:58113/ingest/synthetic
-started: 2026-10-20T22:22:05+00:00
+$ curl -sS -w '\n%{http_code}\n' -H 'Authorization: Bearer synthetic-native-76267dbafbd4ee9f' -H 'Transfer-Encoding: chunked' -d '{}' http://100.x.y.z:52903/ingest/synthetic
+started: 2026-10-20T22:36:09+00:00
 exit: 0
 --- stdout
 Content-Length required

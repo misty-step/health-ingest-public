@@ -1,7 +1,8 @@
-$ sh -c 'curl -sS -o /dev/null -w "%{http_code} %{redirect_url}\n" -H "Cf-Access-Jwt-Assertion: $("$V" assertion --email "$OWNER_EMAIL")" "$EDGE_URL/healthz"'
-started: 2026-10-20T22:22:19+00:00
+$ sh -c 'curl -sS -w "\n%{http_code}\n" -K "$POLLER_CURL" -H "Cf-Access-Jwt-Assertion: $("$V" assertion --email "$OWNER_EMAIL")" "$EDGE_URL/healthz"'
+started: 2026-10-20T22:36:22+00:00
 exit: 0
 --- stdout
-302 http://127.0.0.1:33765/cdn-cgi/access/login?redirect_url=%2Fhealthz
+{"error":"forbidden"}
+403
 --- stderr
 

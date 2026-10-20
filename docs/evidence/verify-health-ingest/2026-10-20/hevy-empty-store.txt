@@ -1,8 +1,8 @@
-$ sh -c 'cat "$1"; echo; python3.14 -c "import json,sys; print(len(json.load(open(sys.argv[1]))))" "$2"' _ ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/hevy/cursor.json ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/native/data/raw/hevy/2026-10-20.json
-started: 2026-10-20T22:22:14+00:00
+$ sh -c 'cat "$1"; echo; python3.14 -c "import json,sys; print(len(json.load(open(sys.argv[1]))))" "$2"' _ ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/hevy/cursor.json ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/native/data/raw/hevy/2026-10-20.json
+started: 2026-10-20T22:36:17+00:00
 exit: 0
 --- stdout
-{"since": "2026-10-20T22:22:14Z"}
+{"since": "2026-10-20T22:36:17Z"}
 4
 --- stderr
 

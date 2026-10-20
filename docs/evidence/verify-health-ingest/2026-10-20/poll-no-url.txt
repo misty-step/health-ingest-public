@@ -1,5 +1,5 @@
 $ env HEALTH_INGEST_POLL_URL= python3.14 scripts/poll_cloudflare_hevy.py
-started: 2026-10-20T22:22:48+00:00
+started: 2026-10-20T22:36:51+00:00
 exit: 2
 --- stdout
 

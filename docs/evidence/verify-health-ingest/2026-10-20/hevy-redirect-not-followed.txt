@@ -1,5 +1,5 @@
-$ grep -c __redirected ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/hevy/requests.jsonl
-started: 2026-10-20T22:22:16+00:00
+$ grep -c __redirected ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/hevy/requests.jsonl
+started: 2026-10-20T22:36:20+00:00
 exit: 1
 --- stdout
 0

@@ -1,5 +1,5 @@
 $ python3.14 -m unittest discover -s tests -v
-started: 2026-10-20T22:20:15+00:00
+started: 2026-10-20T22:34:14+00:00
 exit: 0
 --- stdout
 backfill page 1/3: 10 workouts
@@ -43,6 +43,6 @@ ok
 test_write_paths_and_other_endpoints_are_unreachable (test_sync_hevy.HevyTests.test_write_paths_and_other_endpoints_are_unreachable) ... ok
 
 ----------------------------------------------------------------------
-Ran 28 tests in 17.217s
+Ran 28 tests in 20.986s
 
 OK

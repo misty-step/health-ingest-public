@@ -1,30 +1,30 @@
-health-ingest listening on 100.x.y.z:58113 (storage=~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/native/data/raw)
-20/Oct/2026 22:19:48 "GET /healthz HTTP/1.1" 200 -
-20/Oct/2026 22:20:13 "GET /healthz HTTP/1.1" 200 -
-20/Oct/2026 22:22:04 "GET /healthz HTTP/1.1" 200 -
-20/Oct/2026 22:22:04 "POST /ingest/synthetic HTTP/1.1" 403 -
-20/Oct/2026 22:22:04 "POST /ingest/synthetic HTTP/1.1" 200 -
-20/Oct/2026 22:22:04 "POST /ingest/synthetic HTTP/1.1" 200 -
-20/Oct/2026 22:22:04 "POST /ingest/synthetic HTTP/1.1" 403 -
-20/Oct/2026 22:22:04 "POST /ingest/synthetic HTTP/1.1" 400 -
-20/Oct/2026 22:22:05 "POST /ingest/synthetic HTTP/1.1" 400 -
-20/Oct/2026 22:22:05 "POST /ingest/synthetic HTTP/1.1" 411 -
-20/Oct/2026 22:22:05 "POST /ingest/synthetic HTTP/1.1" 413 -
-20/Oct/2026 22:22:05 "POST /ingest/bad_name HTTP/1.1" 400 -
-20/Oct/2026 22:22:05 "GET /nope HTTP/1.1" 404 -
-WARN: 2026-10-20.222205.json was not a JSON list; writing side file ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/native/data/raw/sidecar/2026-10-20.222205.json instead
-20/Oct/2026 22:22:05 "POST /ingest/sidecar HTTP/1.1" 200 -
-20/Oct/2026 22:22:09 "POST /artoo/snapshot HTTP/1.1" 200 -
-20/Oct/2026 22:22:09 "POST /artoo/snapshot HTTP/1.1" 200 -
-20/Oct/2026 22:22:10 "POST /artoo/snapshot HTTP/1.1" 200 -
-20/Oct/2026 22:22:11 "POST /artoo/snapshot HTTP/1.1" 403 -
-20/Oct/2026 22:22:11 "POST /artoo/snapshot HTTP/1.1" 415 -
-20/Oct/2026 22:22:11 "POST /ingest/hevy HTTP/1.1" 200 -
-20/Oct/2026 22:22:11 "POST /ingest/hevy HTTP/1.1" 200 -
-20/Oct/2026 22:22:13 "POST /ingest/hevy HTTP/1.1" 200 -
-20/Oct/2026 22:22:13 "POST /ingest/hevy HTTP/1.1" 200 -
-20/Oct/2026 22:22:16 "POST /ingest/hevy HTTP/1.1" 200 -
-20/Oct/2026 22:22:30 "GET /healthz HTTP/1.1" 200 -
-health-ingest listening on 100.x.y.z:44713 (storage=~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/native/data/raw)
-20/Oct/2026 22:22:49 "GET /healthz HTTP/1.1" 200 -
-20/Oct/2026 22:22:49 "GET /healthz HTTP/1.1" 200 -
+health-ingest listening on 100.x.y.z:52903 (storage=~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/native/data/raw)
+20/Oct/2026 22:34:09 "GET /healthz HTTP/1.1" 200 -
+20/Oct/2026 22:34:14 "GET /healthz HTTP/1.1" 200 -
+20/Oct/2026 22:36:08 "GET /healthz HTTP/1.1" 200 -
+20/Oct/2026 22:36:08 "POST /ingest/synthetic HTTP/1.1" 403 -
+20/Oct/2026 22:36:08 "POST /ingest/synthetic HTTP/1.1" 200 -
+20/Oct/2026 22:36:08 "POST /ingest/synthetic HTTP/1.1" 200 -
+20/Oct/2026 22:36:08 "POST /ingest/synthetic HTTP/1.1" 403 -
+20/Oct/2026 22:36:09 "POST /ingest/synthetic HTTP/1.1" 400 -
+20/Oct/2026 22:36:09 "POST /ingest/synthetic HTTP/1.1" 400 -
+20/Oct/2026 22:36:09 "POST /ingest/synthetic HTTP/1.1" 411 -
+20/Oct/2026 22:36:09 "POST /ingest/synthetic HTTP/1.1" 413 -
+20/Oct/2026 22:36:09 "POST /ingest/bad_name HTTP/1.1" 400 -
+20/Oct/2026 22:36:09 "GET /nope HTTP/1.1" 404 -
+WARN: 2026-10-20.223609.json was not a JSON list; writing side file ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/native/data/raw/sidecar/2026-10-20.223609.json instead
+20/Oct/2026 22:36:09 "POST /ingest/sidecar HTTP/1.1" 200 -
+20/Oct/2026 22:36:10 "POST /artoo/snapshot HTTP/1.1" 200 -
+20/Oct/2026 22:36:13 "POST /artoo/snapshot HTTP/1.1" 200 -
+20/Oct/2026 22:36:13 "POST /artoo/snapshot HTTP/1.1" 200 -
+20/Oct/2026 22:36:14 "POST /artoo/snapshot HTTP/1.1" 403 -
+20/Oct/2026 22:36:14 "POST /artoo/snapshot HTTP/1.1" 415 -
+20/Oct/2026 22:36:14 "POST /ingest/hevy HTTP/1.1" 200 -
+20/Oct/2026 22:36:14 "POST /ingest/hevy HTTP/1.1" 200 -
+20/Oct/2026 22:36:16 "POST /ingest/hevy HTTP/1.1" 200 -
+20/Oct/2026 22:36:16 "POST /ingest/hevy HTTP/1.1" 200 -
+20/Oct/2026 22:36:19 "POST /ingest/hevy HTTP/1.1" 200 -
+20/Oct/2026 22:36:33 "GET /healthz HTTP/1.1" 200 -
+health-ingest listening on 100.x.y.z:41583 (storage=~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/native/data/raw)
+20/Oct/2026 22:36:53 "GET /healthz HTTP/1.1" 200 -
+20/Oct/2026 22:36:53 "GET /healthz HTTP/1.1" 200 -

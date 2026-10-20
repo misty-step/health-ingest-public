@@ -1,9 +1,9 @@
-$ sh -c 'cat "$1"; echo; tail -2 "$2"' _ ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/hevy/cursor.json ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/hevy/requests.jsonl
-started: 2026-10-20T22:22:13+00:00
+$ sh -c 'cat "$1"; echo; tail -2 "$2"' _ ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/hevy/cursor.json ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/hevy/requests.jsonl
+started: 2026-10-20T22:36:16+00:00
 exit: 0
 --- stdout
-{"since": "2026-10-20T22:22:12Z"}
-{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:22:11Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
-{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:22:11Z", "page": "2", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
+{"since": "2026-10-20T22:36:16Z"}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:36:14Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:36:14Z", "page": "2", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
 --- stderr
 

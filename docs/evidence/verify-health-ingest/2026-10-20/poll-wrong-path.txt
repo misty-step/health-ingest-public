@@ -1,5 +1,5 @@
-$ env HEALTH_INGEST_POLL_URL=http://127.0.0.1:37559/healthz python3.14 scripts/poll_cloudflare_hevy.py
-started: 2026-10-20T22:22:48+00:00
+$ env HEALTH_INGEST_POLL_URL=http://127.0.0.1:54813/healthz python3.14 scripts/poll_cloudflare_hevy.py
+started: 2026-10-20T22:36:51+00:00
 exit: 1
 --- stdout
 [CRON_FAILURE] health-ingest Hevy poll failed; inspect the native run, not response content.

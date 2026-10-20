@@ -1,8 +1,8 @@
-$ curl -sS -L -c ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/owner.jar -b ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/owner.jar -w '\n%{http_code} %{url_effective}\n' 'http://127.0.0.1:33765/cdn-cgi/access/login?email=fictional-owner@example.invalid&redirect_url=%2Fhealthz'
-started: 2026-10-20T22:22:17+00:00
+$ curl -sS -L -c ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/owner.jar -b ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/owner.jar -w '\n%{http_code} %{url_effective}\n' 'http://127.0.0.1:45673/cdn-cgi/access/login?email=fictional-owner@example.invalid&redirect_url=%2Fhealthz'
+started: 2026-10-20T22:36:20+00:00
 exit: 0
 --- stdout
-{"ok":false,"revision":"verify-4e612172c15c","reason":"hevy_never_polled"}
-503 http://127.0.0.1:33765/healthz
+{"ok":false,"revision":"verify-a6710c2df5cc","reason":"hevy_never_polled"}
+503 http://127.0.0.1:45673/healthz
 --- stderr
 

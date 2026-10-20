@@ -1,8 +1,8 @@
-$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/private/writer_curl.conf http://127.0.0.1:37559/healthz
-started: 2026-10-20T22:22:34+00:00
+$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/private/writer_curl.conf http://127.0.0.1:54813/healthz
+started: 2026-10-20T22:36:40+00:00
 exit: 0
 --- stdout
-{"ok":true,"revision":"verify-4e612172c15c"}
+{"ok":true,"revision":"verify-a6710c2df5cc"}
 200
 --- stderr
 

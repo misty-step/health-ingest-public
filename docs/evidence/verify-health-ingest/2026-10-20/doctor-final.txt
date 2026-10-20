@@ -1,22 +1,23 @@
 $ ~/.t3/worktrees/health-ingest-public/verify-verification-skill/.agents/skills/verify-health-ingest/scripts/verify doctor
-started: 2026-10-20T22:22:49+00:00
+started: 2026-10-20T22:36:53+00:00
 exit: 0
 --- stdout
 ok   python3.14: Python 3.14.7
 ok   node 26.x: v26.12.0
-ok   repository: ~/.t3/worktrees/health-ingest-public/verify-verification-skill at 4e612172c15cadfc77c4e96249f149f650f860f6
+ok   repository: ~/.t3/worktrees/health-ingest-public/verify-verification-skill at a6710c2df5ccd0f0ac1e9d4f27278f0474b4bb88
 ok   cloudflare build fresh: build/ newer than every bundled source
-ok   run directory: ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835
-ok   native process ours: pid 898930
+ok   run directory: ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185
+ok   native process ours: pid 1388581
 ok   native port is not the live receiver port
-ok   native store is disposable: ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/native/data
+ok   native store is disposable: ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/native/data
 ok   native /healthz: 200 b'ok\n'
-ok   fictional Hevy process ours: pid 760010
+ok   fictional Hevy process ours: pid 1302431
 ok   fictional Hevy answers: {"mode": "normal"}
-ok   local Worker process ours: pid 879830
-ok   Worker calls this run's fictional Hevy: http://127.0.0.1:51625 (hevy at http://127.0.0.1:51625)
+ok   local Worker process ours: pid 1375075
+ok   Worker runs the current build/worker.js
+ok   Worker calls this run's fictional Hevy: http://127.0.0.1:55223 (hevy at http://127.0.0.1:55223)
 ok   edge refuses anonymous: 302 /cdn-cgi/access/login?redirect_url=%2Fhealthz
-ok   Worker runs this checkout's HEAD: 200 {"ok":true,"revision":"verify-4e612172c15c"} (HEAD verify-4e612172c15c)
+ok   Worker runs this checkout's HEAD: 200 {"ok":true,"revision":"verify-a6710c2df5cc"} (HEAD verify-a6710c2df5cc)
 doctor: ok
 --- stderr
 

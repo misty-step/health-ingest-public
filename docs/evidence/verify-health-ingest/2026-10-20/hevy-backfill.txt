@@ -1,5 +1,5 @@
-$ python3.14 ~/.t3/worktrees/health-ingest-public/verify-verification-skill/.agents/skills/verify-health-ingest/scripts/sync_hevy_stubbed.py --hevy-url http://127.0.0.1:51625 -- --backfill --state ~/.cache/tmp/verify-health-ingest/20261020T221948Z-759835/hevy/cursor.json --ingest-url http://100.x.y.z:58113
-started: 2026-10-20T22:22:11+00:00
+$ python3.14 ~/.t3/worktrees/health-ingest-public/verify-verification-skill/.agents/skills/verify-health-ingest/scripts/sync_hevy_stubbed.py --hevy-url http://127.0.0.1:55223 -- --backfill --state ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/hevy/cursor.json --ingest-url http://100.x.y.z:52903
+started: 2026-10-20T22:36:14+00:00
 exit: 0
 --- stdout
 backfill page 1/2: 10 workouts
