@@ -1,0 +1,10 @@
+$ python3.14 scripts/export_artoo.py --host ingest.example.invalid
+started: 2026-10-21T01:05:01+00:00
+exit: 2
+--- stdout
+
+--- stderr
+usage: export_artoo.py [-h] [--workspace WORKSPACE] [--labs LABS]
+                       [--credential CREDENTIAL] [--scratch SCRATCH]
+                       [--host HOST] [--port PORT]
+export_artoo.py: error: host must be a literal tailnet or loopback IP; DNS is refused

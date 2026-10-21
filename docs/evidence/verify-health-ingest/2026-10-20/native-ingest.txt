@@ -1,0 +1,8 @@
+$ curl -sS -w '\n%{http_code}\n' -H 'Authorization: Bearer synthetic-native-aec77b8ff118968b' -d '{"fictional":1}' http://100.x.y.z:55563/ingest/synthetic
+started: 2026-10-21T01:04:57+00:00
+exit: 0
+--- stdout
+{"status": "ok", "source": "synthetic", "stored": "data/raw/synthetic/2026-10-21.json", "bytes": 15}
+200
+--- stderr
+

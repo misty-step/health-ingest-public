@@ -1,0 +1,7 @@
+$ node cloudflare/build/native-store-cli.mjs audit --directory ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/native/data
+started: 2026-10-21T01:05:28+00:00
+exit: 1
+--- stdout
+
+--- stderr
+Native store operation failed; no completed migration/restore claimed.

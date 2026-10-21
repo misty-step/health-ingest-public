@@ -1,0 +1,7 @@
+$ sha256sum ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/fixed.tar.gz
+started: 2026-10-21T01:05:12+00:00
+exit: 0
+--- stdout
+314dab5d8dbe2fae0c8b284aa6e02381f955056bb60938d1b8566822e8435539  ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/fixed.tar.gz
+--- stderr
+

@@ -1,0 +1,9 @@
+$ sh -c 'cat "$1"; echo; tail -2 "$2"' _ ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/hevy/cursor.json ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/hevy/requests.jsonl
+started: 2026-10-21T01:05:05+00:00
+exit: 0
+--- stdout
+{"since": "2026-10-21T01:05:05Z"}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-21T01:05:03Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-21T01:05:03Z", "page": "2", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
+--- stderr
+

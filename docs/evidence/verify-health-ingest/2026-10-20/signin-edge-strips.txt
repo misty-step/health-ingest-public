@@ -1,0 +1,8 @@
+$ sh -c 'curl -sS -w "\n%{http_code}\n" -K "$POLLER_CURL" -H "Cf-Access-Jwt-Assertion: $("$V" assertion --email "$OWNER_EMAIL")" "$EDGE_URL/healthz"'
+started: 2026-10-21T01:05:11+00:00
+exit: 0
+--- stdout
+{"error":"forbidden"}
+403
+--- stderr
+

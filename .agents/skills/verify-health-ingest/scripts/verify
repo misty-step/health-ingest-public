@@ -1,0 +1,534 @@
+#!/usr/bin/env python3
+"""Verification harness for health-ingest: disposable instances, doctor, transcripts, cleanup.
+
+    verify new                         start a run directory and make it this checkout's current run
+    verify up [native] [hevy] [edge] [--tailnet]
+                                       launch components (default: all three)
+    verify env                         print shell exports for the current run
+    verify doctor                      read-only health check of toolchain and instances
+    verify fixtures artoo|poller-headers
+                                       write synthetic inputs into the run
+    verify hevy-mode MODE              switch the fictional Hevy API's behavior
+    verify r2 [PREFIX]                 second view of the local Worker's stored objects
+    verify assertion (--email E | --client-id C) [--issuer U] [--audience A] [--ttl S] [--iat-offset S]
+                                       print an assertion signed with this run's edge key, for ORIGIN_URL
+    verify rec LABEL -- CMD [ARG...]   run CMD, save command/stdout/stderr/exit as evidence
+    verify stop COMPONENT              stop one component, keeping its state (restart with `up`)
+    verify down                        stop what this run started; keep only evidence/
+
+Runs live under ~/.cache/tmp/verify-health-ingest/<run-id>/. Pin the run with
+the VERIFY_RUN line `new` prints, in every call. Without it, commands fall back to
+this checkout's current-run pointer, which the latest `new` in the checkout moves. Every value printed by `env` is synthetic, and the
+receiver's tokens are random per run. `rec` and `down` redact the home directory
+to ~ and this host's tailnet IP to 100.x.y.z before writing evidence.
+"""
+import hashlib
+import ipaddress
+import json
+import os
+import secrets
+import shlex
+import shutil
+import signal
+import socket
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
+from datetime import datetime, timezone
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parents[3]
+BASE = Path.home() / ".cache" / "tmp" / "verify-health-ingest"
+CURRENT = BASE / f"current-{hashlib.sha256(str(REPO).encode()).hexdigest()[:12]}"
+SYN = {
+    "HEVY_KEY": "00000000-0000-4000-8000-000000000000",
+    "WRITER_ID": "synthetic-writer.access", "WRITER_SECRET": "synthetic-writer-secret",
+    "POLLER_ID": "synthetic-poller.access", "POLLER_SECRET": "synthetic-poller-secret",
+    "UNPINNED_ID": "synthetic-unpinned.access", "UNPINNED_SECRET": "synthetic-unpinned-secret",
+    "OWNER_EMAIL": "fictional-owner@example.invalid",
+    "STRANGER_EMAIL": "fictional-stranger@example.invalid",
+}
+LIVE_NATIVE_PORT = 8789  # an installed receiver may own this; never drive it
+CURL_CONFIGS = {"WRITER_CURL": ("WRITER_ID", "WRITER_SECRET"), "POLLER_CURL": ("POLLER_ID", "POLLER_SECRET"),
+                "UNPINNED_CURL": ("UNPINNED_ID", "UNPINNED_SECRET")}
+
+
+def redact(text):
+    text = text.replace(str(Path.home()), "~")
+    address = tailnet_ip()
+    return text.replace(address, "100.x.y.z") if address else text
+
+
+def head(short=False):
+    argv = ["git", "-C", str(REPO), "rev-parse"] + (["--short=12"] if short else []) + ["HEAD"]
+    return subprocess.run(argv, capture_output=True, text=True).stdout.strip()
+
+
+def stale_builds():
+    """Build outputs older than any Worker source they bundle (None when fresh)."""
+    cf = REPO / "cloudflare"
+    unbundled = {"test.mjs", "hevy-stub.mjs", "staging-expiry.mjs"}  # neither build output imports these
+    sources = [p for p in cf.glob("*.mjs") if not p.name.endswith(".test.mjs") and p.name not in unbundled]
+    sources += [cf / "package-lock.json", cf / "wrangler.json"]
+    newest = max(p.stat().st_mtime for p in sources if p.exists())
+    return [name for name in ("worker.js", "native-store-cli.mjs")
+            if not (cf / "build" / name).exists() or (cf / "build" / name).stat().st_mtime < newest]
+
+
+def die(message, code=1):
+    print(f"verify: {message}", file=sys.stderr)
+    sys.exit(code)
+
+
+def run_dir():
+    chosen = os.environ.get("VERIFY_RUN")
+    path = Path(chosen) if chosen else (CURRENT.resolve() if CURRENT.exists() else None)
+    if not path or not path.is_dir():
+        die("no current run; start one with `verify new`")
+    return path
+
+
+def load_state(run):
+    try:
+        return json.loads((run / "state.json").read_text())
+    except FileNotFoundError:
+        return {"components": {}}
+
+
+def save_state(run, state):
+    tmp = run / "state.json.tmp"
+    tmp.write_text(json.dumps(state, indent=2) + "\n")
+    os.replace(tmp, run / "state.json")
+
+
+def free_port():
+    while True:
+        with socket.socket() as sock:
+            sock.bind(("127.0.0.1", 0))
+            port = sock.getsockname()[1]
+        if port != LIVE_NATIVE_PORT:
+            return port
+
+
+def start_time(pid):
+    try:
+        return Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()[19]
+    except (OSError, IndexError):
+        return None
+
+
+def alive(component):
+    return component and start_time(component["pid"]) == component["start"]
+
+
+def http(url, headers=None, method="GET", data=None, timeout=20):
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, *args, **kwargs):
+            return None
+    request = urllib.request.Request(url, headers=headers or {}, method=method, data=data)
+    try:
+        with urllib.request.build_opener(NoRedirect()).open(request, timeout=timeout) as response:
+            return response.status, dict(response.headers), response.read()
+    except urllib.error.HTTPError as error:
+        body = error.read()
+        error.close()
+        return error.code, dict(error.headers), body
+
+
+def wait_for(check, seconds, what):
+    deadline = time.monotonic() + seconds
+    while time.monotonic() < deadline:
+        try:
+            if check():
+                return
+        except (OSError, urllib.error.URLError):
+            pass
+        time.sleep(0.2)
+    die(f"{what} did not become ready within {seconds}s")
+
+
+_TAILNET = []
+
+
+def build_hash():
+    path = REPO / "cloudflare" / "build" / "worker.js"
+    return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
+
+
+def tailnet_ip():
+    if _TAILNET:
+        return _TAILNET[0]
+    _TAILNET.append(_tailnet_ip())
+    return _TAILNET[0]
+
+
+def _tailnet_ip():
+    try:
+        out = subprocess.run(["tailscale", "ip", "-4"], capture_output=True, text=True, timeout=10).stdout
+        address = out.split()[0]
+        if ipaddress.ip_address(address) in ipaddress.ip_network("100.64.0.0/10"):
+            return address
+    except (OSError, IndexError, ValueError, subprocess.SubprocessError):
+        pass
+    return None
+
+
+def spawn(run, name, argv, env=None, cwd=None):
+    path = run / "logs" / f"{name}.log"
+    offset = path.stat().st_size if path.exists() else 0  # a restart appends; readiness reads only new output
+    log = open(path, "ab")
+    process = subprocess.Popen(argv, cwd=cwd, env={**os.environ, **(env or {})}, stdout=log,
+                               stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True)
+    return {"pid": process.pid, "start": start_time(process.pid), "log": str(path), "offset": offset}
+
+
+def cmd_new(_args):
+    if os.environ.get("VERIFY_RUN"):
+        die("VERIFY_RUN is set, so later commands would keep driving that run; unset it before `verify new`")
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run = BASE / f"{stamp}-{os.getpid()}"
+    for sub in ("evidence", "logs"):
+        (run / sub).mkdir(parents=True, exist_ok=True)
+    tokens = {"NATIVE_TOKEN": "synthetic-native-" + secrets.token_hex(8),
+              "ARTOO_TOKEN": "synthetic-artoo-" + secrets.token_hex(8)}
+    private = run / "private"
+    private.mkdir(mode=0o700)
+    for name, (id_key, secret_key) in CURL_CONFIGS.items():
+        config = private / f"{name.lower()}.conf"
+        config.write_text(f'header = "CF-Access-Client-Id: {SYN[id_key]}"\n'
+                          f'header = "CF-Access-Client-Secret: {SYN[secret_key]}"\n')
+        config.chmod(0o600)
+    save_state(run, {"components": {}, "repo": str(REPO), "created": stamp, "tokens": tokens})
+    if CURRENT.is_symlink() or CURRENT.exists():
+        CURRENT.unlink()
+    CURRENT.symlink_to(run)
+    print(run)
+    print(f"export VERIFY_RUN='{run}'  # start every later call with this line")
+
+
+def up_native(run, state, tailnet):
+    host = "127.0.0.1"
+    tailnet = tailnet or state["components"].get("native", {}).get("tailnet", False)  # a restart keeps its bind
+    if tailnet:
+        host = tailnet_ip() or die("--tailnet needs `tailscale ip -4` to return a 100.64.0.0/10 address")
+    port = free_port()
+    home = run / "native"
+    home.mkdir(exist_ok=True)
+    shutil.copy2(REPO / "server.py", home / "server.py")  # storage is next to server.py: keep it disposable
+    token = home / ".artoo-token"
+    token.write_text(state["tokens"]["ARTOO_TOKEN"] + "\n")
+    token.chmod(0o600)
+    # UTC keeps day files and receipts free of the host's timezone.
+    component = spawn(run, "native", ["python3.14", str(home / "server.py")], cwd=home, env={
+        "HEALTH_INGEST_TOKEN": state["tokens"]["NATIVE_TOKEN"], "HEALTH_INGEST_BIND": host,
+        "HEALTH_INGEST_PORT": str(port), "TZ": "UTC"})
+    url = f"http://{host}:{port}"
+    component.update(url=url, data=str(home / "data"), tailnet=tailnet)
+    state["components"]["native"] = component
+    wait_for(lambda: http(url + "/healthz")[2] == b"ok\n", 15, "native receiver")
+    print(f"native receiver ready at {url} (store {home / 'data'})")
+
+
+def up_hevy(run, state):
+    port = free_port()
+    (run / "hevy").mkdir(exist_ok=True)
+    component = spawn(run, "hevy", ["python3.14", str(HERE / "fake_hevy.py"), "--port", str(port),
+                                    "--log", str(run / "hevy" / "requests.jsonl")])
+    component["url"] = f"http://127.0.0.1:{port}"
+    state["components"]["hevy"] = component
+    wait_for(lambda: http(component["url"] + "/__mode")[0] == 200, 10, "fictional Hevy API")
+    print(f"fictional Hevy API ready at {component['url']}")
+
+
+def up_edge(run, state):
+    build = REPO / "cloudflare" / "build" / "worker.js"
+    if not (REPO / "cloudflare" / "node_modules" / "miniflare").is_dir():
+        die("cloudflare dependencies missing: run `cd cloudflare && npm ci --ignore-scripts && npm run build`")
+    if stale_builds():
+        die(f"cloudflare/build/{', '.join(stale_builds())} missing or older than its sources: run `cd cloudflare && npm run build`")
+    hevy = state["components"].get("hevy")
+    if not alive(hevy):
+        die("start the fictional Hevy API first: `verify up hevy`")
+    ports = {name: free_port() for name in ("edge", "origin", "control")}
+    (run / "edge").mkdir(exist_ok=True)
+    release = head(short=True) or "local"
+    component = spawn(run, "edge", ["node", str(HERE / "local-edge.mjs"), "--state", str(run / "edge"),
+                                    "--edge-port", str(ports["edge"]), "--origin-port", str(ports["origin"]),
+                                    "--control-port", str(ports["control"]), "--hevy-url", hevy["url"]],
+                      env={"VERIFY_RELEASE": f"verify-{release}"})
+    component.update(url=f"http://127.0.0.1:{ports['edge']}", origin=f"http://127.0.0.1:{ports['origin']}",
+                     control=f"http://127.0.0.1:{ports['control']}", release=f"verify-{release}",
+                     hevy_url=hevy["url"], build=build_hash())
+    state["components"]["edge"] = component
+    def ready():
+        with open(component["log"], "rb") as log:
+            log.seek(component["offset"])
+            return b"local-edge ready" in log.read()
+    wait_for(ready, 60, "local Worker edge")
+    print(f"local Worker ready: edge {component['url']}, origin {component['origin']}, control {component['control']}")
+
+
+def cmd_up(args):
+    run = run_dir()
+    state = load_state(run)
+    tailnet = "--tailnet" in args
+    wanted = [a for a in args if not a.startswith("--")] or ["native", "hevy", "edge"]
+    if "edge" in wanted and not alive(state["components"].get("hevy")):
+        wanted.append("hevy")  # the edge's outbound Hevy calls need the stub
+    for name in ("native", "hevy", "edge"):
+        if name not in wanted:
+            continue
+        if alive(state["components"].get(name)):
+            print(f"{name} already running (pid {state['components'][name]['pid']})")
+            continue
+        {"native": lambda: up_native(run, state, tailnet), "hevy": lambda: up_hevy(run, state),
+         "edge": lambda: up_edge(run, state)}[name]()
+        save_state(run, state)
+    edge, hevy = state["components"].get("edge"), state["components"].get("hevy")
+    stale = alive(edge) and edge.get("build") != build_hash()
+    if alive(edge) and hevy and (edge.get("hevy_url") != hevy["url"] or stale):
+        print("edge runs an older build or points at an old fictional Hevy URL; restarting it")
+        stop("edge", edge)
+        up_edge(run, state)
+        save_state(run, state)
+
+
+def cmd_env(_args):
+    run = run_dir()
+    state = load_state(run)
+    c = state["components"]
+    values = {"VERIFY_RUN": str(run), "EVIDENCE": str(run / "evidence"), "REPO": str(REPO),
+              "SKILL": str(HERE.parent), "V": str(HERE / "verify"), **SYN, **state.get("tokens", {}),
+              "D": datetime.now(timezone.utc).strftime("%Y-%m-%d"), "ST": str(run / "hevy" / "cursor.json"),
+              "J": str(run / "owner.jar"), "FIXED_GZ": str(run / "fixed.tar.gz")}
+    values.update({name: str(run / "private" / f"{name.lower()}.conf") for name in CURL_CONFIGS})
+    tokens = state.get("tokens", {})
+    # What the shipped CLIs read from the environment, so any fresh shell can drive them.
+    values.update(HEVY_API_KEY=SYN["HEVY_KEY"], HEALTH_INGEST_TOKEN=tokens.get("NATIVE_TOKEN", ""),
+                  HEALTH_INGEST_POLLER_HEADERS_FILE=str(run / "private" / "poller-headers.json"),
+                  ARTOO_WORKSPACE=str(run / "artoo" / "workspace"), ARTOO_LABS=str(run / "artoo" / "lab_results.jsonl"),
+                  ARTOO_CREDENTIAL_FILE=str(run / "private" / "artoo.token"), ARTOO_SCRATCH=str(run / "artoo" / "scratch"))
+    if c.get("native"):
+        values.update(NATIVE_URL=c["native"]["url"], NATIVE_DATA=c["native"]["data"])
+        hostport = c["native"]["url"].removeprefix("http://")
+        values.update(ARTOO_HOST=hostport.rsplit(":", 1)[0], ARTOO_PORT=hostport.rsplit(":", 1)[1])
+    if c.get("hevy"):
+        values["HEVY_URL"] = c["hevy"]["url"]
+        values["SYNC"] = f"{HERE / 'sync_hevy_stubbed.py'} --hevy-url {c['hevy']['url']} --"
+    if c.get("edge"):
+        values.update(EDGE_URL=c["edge"]["url"], ORIGIN_URL=c["edge"]["origin"],
+                      CONTROL_URL=c["edge"]["control"], RELEASE=c["edge"]["release"],
+                      HEALTH_INGEST_POLL_URL=c["edge"]["url"] + "/internal/hevy-poll")
+    for name, value in values.items():
+        print(f"export {name}='{value}'")
+
+
+def cmd_doctor(_args):
+    failures = []
+
+    def check(ok, label, detail=""):
+        print(f"{'ok  ' if ok else 'FAIL'} {label}{(': ' + detail) if detail else ''}")
+        if not ok:
+            failures.append(label)
+
+    py = subprocess.run(["python3.14", "--version"], capture_output=True, text=True)
+    check(py.returncode == 0 and py.stdout.startswith("Python 3.14"), "python3.14", py.stdout.strip() or "missing")
+    node = subprocess.run(["node", "--version"], capture_output=True, text=True)
+    check(node.returncode == 0 and node.stdout.startswith("v26."), "node 26.x", node.stdout.strip() or "missing")
+    check(bool(head()), "repository", f"{REPO} at {head()}")
+    stale = stale_builds()
+    check(not stale, "cloudflare build fresh", ", ".join(stale) or "build/ newer than every bundled source")
+    run = run_dir()
+    state = load_state(run)
+    check(run.is_relative_to(BASE) or "VERIFY_RUN" in os.environ, "run directory", str(run))
+    c = state["components"]
+    if not c:
+        print("info no components started; run `verify up`")
+    native = c.get("native")
+    if native:
+        check(alive(native), "native process ours", f"pid {native['pid']}")
+        check(not native["url"].endswith(f":{LIVE_NATIVE_PORT}"), "native port is not the live receiver port")
+        check(Path(native["data"]).is_relative_to(run), "native store is disposable", native["data"])
+        try:
+            status, _, body = http(native["url"] + "/healthz")
+            check(status == 200 and body == b"ok\n", "native /healthz", f"{status} {body!r}")
+        except OSError as error:
+            check(False, "native /healthz", str(error))
+    hevy = c.get("hevy")
+    if hevy:
+        check(alive(hevy), "fictional Hevy process ours", f"pid {hevy['pid']}")
+        try:
+            status, _, body = http(hevy["url"] + "/__mode")
+            check(status == 200, "fictional Hevy answers", body.decode())
+        except OSError as error:
+            check(False, "fictional Hevy answers", str(error))
+    edge = c.get("edge")
+    if edge:
+        check(alive(edge), "local Worker process ours", f"pid {edge['pid']}")
+        check(edge.get("build") == build_hash(), "Worker runs the current build/worker.js",
+              "rebuilt since the edge started: run `verify up edge`" if edge.get("build") != build_hash() else "")
+        check(not hevy or edge.get("hevy_url") == hevy["url"], "Worker calls this run's fictional Hevy",
+              f"{edge.get('hevy_url')} (hevy at {hevy['url'] if hevy else '-'})")
+        try:
+            status, headers, _ = http(edge["url"] + "/healthz")
+            location = headers.get("Location", "")
+            check(status == 302 and location.startswith("/cdn-cgi/access/login"), "edge refuses anonymous", f"{status} {location}")
+            status, _, body = http(edge["url"] + "/healthz", {"CF-Access-Client-Id": SYN["WRITER_ID"],
+                                                              "CF-Access-Client-Secret": SYN["WRITER_SECRET"]})
+            revision = json.loads(body or b"{}").get("revision")
+            current = f"verify-{head(short=True)}"
+            check(status in (200, 503) and revision == edge["release"] == current,
+                  "Worker runs this checkout's HEAD", f"{status} {body.decode()} (HEAD {current})")
+        except (OSError, ValueError) as error:
+            check(False, "local Worker answers", str(error))
+    if failures:
+        die(f"doctor found {len(failures)} problem(s): {', '.join(failures)}")
+    print("doctor: ok")
+
+
+def cmd_fixtures(args):
+    run = run_dir()
+    kind = args[0] if args else die("fixtures needs artoo or poller-headers")
+    private = run / "private"
+    private.mkdir(mode=0o700, exist_ok=True)
+    if kind == "artoo":
+        workspace = run / "artoo" / "workspace"
+        for name in ("metrics_daily", "sleep", "workouts"):
+            path = workspace / "health-data" / f"{name}.jsonl"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps({"fictional": True, "file": name, "value": 1}) + "\n")
+        for name in ("accounts", "transactions", "investments", "liabilities"):
+            path = workspace / "finance-data" / f"{name}.jsonl"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps({"fictional": True, "file": name, "amount": 0}) + "\n")
+        inbox = workspace / "finance-data" / "inbox"
+        inbox.mkdir(parents=True, exist_ok=True)
+        (inbox / "fictional-statement.eml").write_text(
+            "From: lender@example.invalid\nTo: owner@example.invalid\nSubject: Fictional statement\n\nSynthetic.\n")
+        labs = run / "artoo" / "lab_results.jsonl"
+        labs.write_text(json.dumps({"fictional": True, "marker": "synthetic", "value": 0}) + "\n")
+        credential = private / "artoo.token"
+        credential.write_text(load_state(run)["tokens"]["ARTOO_TOKEN"] + "\n")
+        credential.chmod(0o600)
+        (run / "artoo" / "scratch").mkdir(exist_ok=True)
+        print(f"export ARTOO_WORKSPACE='{workspace}'\nexport ARTOO_LABS='{labs}'\n"
+              f"export ARTOO_CREDENTIAL_FILE='{credential}'\nexport ARTOO_SCRATCH='{run / 'artoo' / 'scratch'}'")
+    elif kind == "poller-headers":
+        path = private / "poller-headers.json"
+        path.write_text(json.dumps({"CF-Access-Client-Id": SYN["POLLER_ID"],
+                                    "CF-Access-Client-Secret": SYN["POLLER_SECRET"]}))
+        path.chmod(0o600)
+        print(f"export HEALTH_INGEST_POLLER_HEADERS_FILE='{path}'")
+    else:
+        die(f"unknown fixture {kind}")
+
+
+def cmd_hevy_mode(args):
+    state = load_state(run_dir())
+    hevy = state["components"].get("hevy") or die("fictional Hevy is not running")
+    status, _, body = http(f"{hevy['url']}/__mode/{args[0] if args else 'normal'}", method="POST", data=b"")
+    print(status, body.decode())
+    sys.exit(0 if status == 200 else 1)
+
+
+def cmd_r2(args):
+    state = load_state(run_dir())
+    edge = state["components"].get("edge") or die("local Worker is not running")
+    prefix = args[0] if args else ""
+    status, _, body = http(f"{edge['control']}/r2?prefix={urllib.request.quote(prefix)}")
+    print(json.dumps(json.loads(body), indent=2) if status == 200 else f"{status} {body!r}")
+
+
+def cmd_assertion(args):
+    state = load_state(run_dir())
+    edge = state["components"].get("edge") or die("local Worker is not running")
+    claims, it = {}, iter(args)
+    names = {"--email": "email", "--client-id": "client_id", "--issuer": "issuer", "--audience": "audience",
+             "--ttl": "ttl", "--iat-offset": "iat_offset"}
+    for flag in it:
+        if flag not in names:
+            die(f"unknown flag {flag}", 2)
+        value = next(it, None) or die(f"{flag} needs a value", 2)
+        try:
+            claims[names[flag]] = int(value) if flag in ("--ttl", "--iat-offset") else value
+        except ValueError:
+            die(f"{flag} needs an integer number of seconds", 2)
+    if ("email" in claims) == ("client_id" in claims):
+        die("give exactly one of --email or --client-id", 2)
+    status, _, body = http(f"{edge['control']}/sign", {"Content-Type": "application/json"}, "POST",
+                           json.dumps(claims).encode())
+    if status != 200:
+        die(f"control /sign answered {status}")
+    print(body.decode())
+
+
+def cmd_rec(args):
+    if "--" not in args or args.index("--") != 1:
+        die("usage: verify rec LABEL -- CMD [ARG...]", 2)
+    label, argv = args[0], args[2:]
+    run = run_dir()
+    started = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    result = subprocess.run(argv, capture_output=True, text=True, errors="replace")
+    lines = [f"$ {shlex.join(argv)}", f"started: {started}", f"exit: {result.returncode}",
+             "--- stdout", result.stdout.rstrip("\n"), "--- stderr", result.stderr.rstrip("\n")]
+    path = run / "evidence" / f"{label}.txt"
+    path.write_text(redact("\n".join(lines) + "\n"))
+    sys.stdout.write(result.stdout)
+    sys.stderr.write(result.stderr)
+    print(f"[evidence {path.name}: exit {result.returncode}]", file=sys.stderr)
+    sys.exit(result.returncode)
+
+
+def stop(name, component):
+    if not alive(component):
+        if component and start_time(component["pid"]) is None:
+            try:  # the leader died; its group (e.g. workerd under node) may still be running
+                os.killpg(component["pid"], signal.SIGKILL)
+                print(f"stopped leftover {name} group (pgid {component['pid']})")
+            except (ProcessLookupError, PermissionError):
+                pass
+        return
+    os.killpg(component["pid"], signal.SIGTERM)
+    for _ in range(50):
+        if not alive(component):
+            break
+        time.sleep(0.1)
+    if alive(component):
+        os.killpg(component["pid"], signal.SIGKILL)
+    print(f"stopped {name} (pid {component['pid']})")
+
+
+def cmd_stop(args):
+    run = run_dir()
+    state = load_state(run)
+    name = args[0] if args else die("stop needs native, hevy or edge")
+    component = state["components"].get(name) or die(f"{name} was not started in this run")
+    stop(name, component)
+
+
+def cmd_down(_args):
+    run = run_dir()
+    state = load_state(run)
+    for name, component in state["components"].items():
+        stop(name, component)
+        if component.get("log") and Path(component["log"]).exists():
+            (run / "evidence" / f"{name}.log").write_text(redact(Path(component["log"]).read_text(errors="replace")))
+    for child in run.iterdir():
+        if child.name != "evidence":
+            shutil.rmtree(child) if child.is_dir() and not child.is_symlink() else child.unlink()
+    if CURRENT.is_symlink() and CURRENT.resolve() == run:
+        CURRENT.unlink()
+    print(f"evidence kept at {run / 'evidence'}")
+
+
+COMMANDS = {"new": cmd_new, "up": cmd_up, "env": cmd_env, "doctor": cmd_doctor, "fixtures": cmd_fixtures,
+            "hevy-mode": cmd_hevy_mode, "r2": cmd_r2, "assertion": cmd_assertion, "rec": cmd_rec, "stop": cmd_stop, "down": cmd_down}
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2 or sys.argv[1] not in COMMANDS:
+        print(__doc__)
+        sys.exit(2)
+    COMMANDS[sys.argv[1]](sys.argv[2:])

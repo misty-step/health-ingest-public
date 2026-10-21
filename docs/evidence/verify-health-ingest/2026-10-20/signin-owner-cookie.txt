@@ -1,0 +1,7 @@
+$ sh -c 'grep -c CF_Authorization "$1"' _ ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/owner.jar
+started: 2026-10-21T01:05:09+00:00
+exit: 0
+--- stdout
+1
+--- stderr
+

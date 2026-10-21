@@ -1,0 +1,9 @@
+$ curl -sS -w '\n%{http_code}\n' -H 'Authorization: Bearer synthetic-native-aec77b8ff118968b' -H 'Transfer-Encoding: chunked' -d '{}' http://100.x.y.z:55563/ingest/synthetic
+started: 2026-10-21T01:04:58+00:00
+exit: 0
+--- stdout
+Content-Length required
+
+411
+--- stderr
+

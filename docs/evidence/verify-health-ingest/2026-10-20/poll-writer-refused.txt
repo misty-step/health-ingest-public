@@ -1,0 +1,8 @@
+$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/private/writer_curl.conf -X POST -d '' http://127.0.0.1:41893/internal/hevy-poll
+started: 2026-10-21T01:05:27+00:00
+exit: 0
+--- stdout
+
+403
+--- stderr
+

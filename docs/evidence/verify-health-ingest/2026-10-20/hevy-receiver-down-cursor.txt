@@ -1,0 +1,7 @@
+$ cmp ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/hevy/cursor.json ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/hevy/cursor.json.before
+started: 2026-10-21T01:05:08+00:00
+exit: 0
+--- stdout
+
+--- stderr
+

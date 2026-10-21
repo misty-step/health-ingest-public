@@ -1,0 +1,8 @@
+$ python3.14 ~/.t3/worktrees/health-ingest-public/verify-verification-skill/.agents/skills/verify-health-ingest/scripts/sync_hevy_stubbed.py --hevy-url http://127.0.0.1:47429 -- --backfill --state ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/hevy/cursor.json --ingest-url http://100.x.y.z:55563
+started: 2026-10-21T01:05:03+00:00
+exit: 0
+--- stdout
+backfill page 1/2: 10 workouts
+backfill page 2/2: 1 workouts
+--- stderr
+

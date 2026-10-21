@@ -1,0 +1,9 @@
+$ python3.14 ~/.t3/worktrees/health-ingest-public/verify-verification-skill/.agents/skills/verify-health-ingest/scripts/sync_hevy_stubbed.py --hevy-url http://127.0.0.1:47429 -- --poll --ingest-url http://100.x.y.z:55563
+started: 2026-10-21T01:05:09+00:00
+exit: 2
+--- stdout
+
+--- stderr
+usage: sync_hevy_stubbed.py [-h] (--backfill | --poll) [--env-file ENV_FILE]
+                            [--state STATE] [--ingest-url INGEST_URL]
+sync_hevy_stubbed.py: error: --state or HEALTH_INGEST_STATE_FILE is required

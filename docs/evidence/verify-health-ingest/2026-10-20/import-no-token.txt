@@ -1,0 +1,7 @@
+$ sh -c 'echo | node cloudflare/build/native-store-cli.mjs import --directory "$NATIVE_DATA" --account 00000000000000000000000000000000 --bucket synthetic-records'
+started: 2026-10-21T01:05:28+00:00
+exit: 1
+--- stdout
+
+--- stderr
+Native store operation failed; no completed migration/restore claimed.
