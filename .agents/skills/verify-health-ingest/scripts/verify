@@ -16,9 +16,9 @@
     verify stop COMPONENT              stop one component, keeping its state (restart with `up`)
     verify down                        stop what this run started; keep only evidence/
 
-Runs live under ~/.cache/tmp/verify-health-ingest/<run-id>/. Each checkout has
-its own current-run pointer, so agents in separate worktrees never share a run;
-VERIFY_RUN overrides it. Every value printed by `env` is synthetic, and the
+Runs live under ~/.cache/tmp/verify-health-ingest/<run-id>/. Pin the run with
+the VERIFY_RUN line `new` prints, in every call. Without it, commands fall back to
+this checkout's current-run pointer, which the latest `new` in the checkout moves. Every value printed by `env` is synthetic, and the
 receiver's tokens are random per run. `rec` and `down` redact the home directory
 to ~ and this host's tailnet IP to 100.x.y.z before writing evidence.
 """
@@ -70,7 +70,8 @@ def head(short=False):
 def stale_builds():
     """Build outputs older than any Worker source they bundle (None when fresh)."""
     cf = REPO / "cloudflare"
-    sources = [p for p in cf.glob("*.mjs") if not p.name.endswith(".test.mjs") and p.name != "test.mjs"]
+    unbundled = {"test.mjs", "hevy-stub.mjs", "staging-expiry.mjs"}  # neither build output imports these
+    sources = [p for p in cf.glob("*.mjs") if not p.name.endswith(".test.mjs") and p.name not in unbundled]
     sources += [cf / "package-lock.json", cf / "wrangler.json"]
     newest = max(p.stat().st_mtime for p in sources if p.exists())
     return [name for name in ("worker.js", "native-store-cli.mjs")
@@ -205,7 +206,7 @@ def cmd_new(_args):
         CURRENT.unlink()
     CURRENT.symlink_to(run)
     print(run)
-    print(f"export VERIFY_RUN='{run}'  # pin this in every later call if any other agent may use this checkout")
+    print(f"export VERIFY_RUN='{run}'  # start every later call with this line")
 
 
 def up_native(run, state, tailnet):
@@ -275,6 +276,8 @@ def cmd_up(args):
     state = load_state(run)
     tailnet = "--tailnet" in args
     wanted = [a for a in args if not a.startswith("--")] or ["native", "hevy", "edge"]
+    if "edge" in wanted and not alive(state["components"].get("hevy")):
+        wanted.append("hevy")  # the edge's outbound Hevy calls need the stub
     for name in ("native", "hevy", "edge"):
         if name not in wanted:
             continue

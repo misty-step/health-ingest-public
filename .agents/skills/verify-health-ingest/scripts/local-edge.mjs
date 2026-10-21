@@ -178,14 +178,23 @@ const control = createServer(async (req, res) => {
     for await (const chunk of req) chunks.push(chunk);
     let claims;
     try { claims = JSON.parse(Buffer.concat(chunks).toString() || '{}'); } catch { claims = null; }
-    if (!claims || typeof claims !== 'object' || (!claims.email === !claims.client_id)) {
-      res.writeHead(400, { 'Content-Type': 'text/plain' }).end('give JSON with exactly one of email or client_id\n');
+    const text = v => v === undefined || typeof v === 'string';
+    const int = v => v === undefined || Number.isInteger(v);
+    if (!claims || typeof claims !== 'object' || (!claims.email === !claims.client_id) ||
+        !text(claims.email) || !text(claims.client_id) || !text(claims.issuer) || !text(claims.audience) ||
+        !int(claims.ttl) || !int(claims.iat_offset)) {
+      res.writeHead(400, { 'Content-Type': 'text/plain' })
+        .end('give JSON with exactly one string email or client_id; issuer/audience strings; ttl/iat_offset integers\n');
       return;
     }
-    const subject = claims.email ? { sub: 'synthetic-signed', email: claims.email } : { sub: '', common_name: claims.client_id };
-    const jwt = await sign(subject, claims.ttl ?? 300,
-      { issuer: claims.issuer, audience: claims.audience, iatOffset: claims.iat_offset ?? 0 });
-    res.writeHead(200, { 'Content-Type': 'text/plain' }).end(jwt);
+    try {
+      const subject = claims.email ? { sub: 'synthetic-signed', email: claims.email } : { sub: '', common_name: claims.client_id };
+      const jwt = await sign(subject, claims.ttl ?? 300,
+        { issuer: claims.issuer, audience: claims.audience, iatOffset: claims.iat_offset ?? 0 });
+      res.writeHead(200, { 'Content-Type': 'text/plain' }).end(jwt);
+    } catch (error) {
+      res.writeHead(400, { 'Content-Type': 'text/plain' }).end(`cannot sign: ${error.message}\n`);
+    }
     return;
   }
   if (req.method !== 'GET' || url.pathname !== '/r2') { res.writeHead(404).end(); return; }

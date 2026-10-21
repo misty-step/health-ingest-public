@@ -21,7 +21,8 @@ From the repository root, once per checkout and again after any change under `cl
 
 Then, per run:
 
-    .agents/skills/verify-health-ingest/scripts/verify new          # ~/.cache/tmp/verify-health-ingest/<run-id>/, this checkout's current run
+    .agents/skills/verify-health-ingest/scripts/verify new          # prints the run dir and an export VERIFY_RUN=... line
+    export VERIFY_RUN=<the run dir it printed>                       # first line of every later call
     .agents/skills/verify-health-ingest/scripts/verify up --tailnet # native receiver + fictional Hevy + local Worker edge
     eval "$(.agents/skills/verify-health-ingest/scripts/verify env)"
 
@@ -96,5 +97,7 @@ All under `.agents/skills/verify-health-ingest/scripts/` and executable:
 | `fake_hevy.py` | started by `verify up hevy`; directly: `fake_hevy.py --port N --log FILE` |
 | `local-edge.mjs` | started by `verify up edge`; directly: `node local-edge.mjs --state DIR --edge-port N --origin-port N --control-port N --hevy-url URL` |
 | `sync_hevy_stubbed.py` | through `$SYNC`; directly: `sync_hevy_stubbed.py --hevy-url "$HEVY_URL" -- --backfill\|--poll --state FILE --ingest-url "$NATIVE_URL"` |
+
+This skill and its evidence (`.agents/skills/verify-health-ingest/`, the `.claude/skills/verify-health-ingest` link and `docs/evidence/verify-health-ingest/`) are maintained in this repository. They are not export outputs, so `export-manifest.json` does not list them.
 
 Keep the map honest as the code changes with `~/.agents/skills/maintain-verification-skill/SKILL.md`.
