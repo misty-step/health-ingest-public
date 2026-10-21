@@ -1,7 +1,7 @@
 $ ~/.t3/worktrees/health-ingest-public/verify-verification-skill/.agents/skills/verify-health-ingest/scripts/verify stop native
-started: 2026-10-20T22:36:52+00:00
+started: 2026-10-21T01:05:28+00:00
 exit: 0
 --- stdout
-stopped native (pid 1302365)
+stopped native (pid 1737096)
 --- stderr
 

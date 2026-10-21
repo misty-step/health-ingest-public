@@ -1,8 +1,8 @@
-$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/private/writer_curl.conf -H 'Content-Type: application/json' -d '{"fictional":true,"n":1}' http://127.0.0.1:54813/ingest/synthetic
-started: 2026-10-20T22:36:33+00:00
+$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/private/writer_curl.conf -H 'Content-Type: application/json' -d '{"fictional":true,"n":1}' http://127.0.0.1:41893/ingest/synthetic
+started: 2026-10-21T01:05:15+00:00
 exit: 0
 --- stdout
-{"status":"ok","source":"synthetic","stored":"raw/synthetic/d89e93944ba5d10e10f99f007815157cf3a408990c3f0b18c203e9f266a074e6","bytes":24,"sha256":"d89e93944ba5d10e10f99f007815157cf3a408990c3f0b18c203e9f266a074e6","received_at":"2026-10-20T22:36:24.659Z"}
+{"status":"ok","source":"synthetic","stored":"raw/synthetic/d89e93944ba5d10e10f99f007815157cf3a408990c3f0b18c203e9f266a074e6","bytes":24,"sha256":"d89e93944ba5d10e10f99f007815157cf3a408990c3f0b18c203e9f266a074e6","received_at":"2026-10-21T01:05:11.853Z"}
 200
 --- stderr
 

@@ -1,5 +1,5 @@
-$ sh -c 'find "$1" -type f | wc -l' _ ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/native/data
-started: 2026-10-20T22:36:52+00:00
+$ sh -c 'find "$1" -type f | wc -l' _ ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/native/data
+started: 2026-10-21T01:05:28+00:00
 exit: 0
 --- stdout
 9

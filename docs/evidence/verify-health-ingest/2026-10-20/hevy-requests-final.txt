@@ -1,15 +1,15 @@
-$ cat ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/hevy/requests.jsonl
-started: 2026-10-20T22:36:20+00:00
+$ cat ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/hevy/requests.jsonl
+started: 2026-10-21T01:05:09+00:00
 exit: 0
 --- stdout
 {"method": "GET", "path": "/v1/workouts", "query": {"page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
 {"method": "GET", "path": "/v1/workouts", "query": {"page": "2", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
-{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:36:14Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
-{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:36:14Z", "page": "2", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
-{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:36:16Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "empty", "status": 200}
-{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:36:17Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "partial", "status": 200}
-{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:36:17Z", "page": "2", "pageSize": "10"}, "api_key_ok": true, "mode": "partial", "status": 503}
-{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:36:17Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
-{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-20T22:36:17Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "redirect", "status": 302}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-21T01:05:03Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-21T01:05:03Z", "page": "2", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-21T01:05:05Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "empty", "status": 200}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-21T01:05:06Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "partial", "status": 200}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-21T01:05:06Z", "page": "2", "pageSize": "10"}, "api_key_ok": true, "mode": "partial", "status": 503}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-21T01:05:06Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "normal", "status": 200}
+{"method": "GET", "path": "/v1/workouts/events", "query": {"since": "2026-10-21T01:05:06Z", "page": "1", "pageSize": "10"}, "api_key_ok": true, "mode": "redirect", "status": 302}
 --- stderr
 

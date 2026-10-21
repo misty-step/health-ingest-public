@@ -1,5 +1,5 @@
-$ curl -sS -w '\n%{http_code}\n' -H 'Authorization: Bearer synthetic-native-76267dbafbd4ee9f' -d '{bad' http://100.x.y.z:52903/ingest/synthetic
-started: 2026-10-20T22:36:09+00:00
+$ curl -sS -w '\n%{http_code}\n' -H 'Authorization: Bearer synthetic-native-aec77b8ff118968b' -d '{bad' http://100.x.y.z:55563/ingest/synthetic
+started: 2026-10-21T01:04:58+00:00
 exit: 0
 --- stdout
 invalid JSON: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)

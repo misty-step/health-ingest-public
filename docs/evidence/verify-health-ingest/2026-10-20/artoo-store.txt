@@ -1,9 +1,9 @@
 $ sh -c 'cd "$NATIVE_DATA" && find raw/artoo -type f | sort && sha256sum raw/artoo/*/*/snapshot.tar.gz'
-started: 2026-10-20T22:36:11+00:00
+started: 2026-10-21T01:05:00+00:00
 exit: 0
 --- stdout
-raw/artoo/2026-10-20/68ca55412e0d7ca445203f8d961cada000755ec5bf8796c55f667844df4a5402/receipt.json
-raw/artoo/2026-10-20/68ca55412e0d7ca445203f8d961cada000755ec5bf8796c55f667844df4a5402/snapshot.tar.gz
-68ca55412e0d7ca445203f8d961cada000755ec5bf8796c55f667844df4a5402  raw/artoo/2026-10-20/68ca55412e0d7ca445203f8d961cada000755ec5bf8796c55f667844df4a5402/snapshot.tar.gz
+raw/artoo/2026-10-21/8b0618e6655980c11cdfea714491056fb8377b16d5c4579675eda8e2d5d42db3/receipt.json
+raw/artoo/2026-10-21/8b0618e6655980c11cdfea714491056fb8377b16d5c4579675eda8e2d5d42db3/snapshot.tar.gz
+8b0618e6655980c11cdfea714491056fb8377b16d5c4579675eda8e2d5d42db3  raw/artoo/2026-10-21/8b0618e6655980c11cdfea714491056fb8377b16d5c4579675eda8e2d5d42db3/snapshot.tar.gz
 --- stderr
 

@@ -1,7 +1,7 @@
 $ python3.14 scripts/export_artoo.py
-started: 2026-10-20T22:36:14+00:00
+started: 2026-10-21T01:05:01+00:00
 exit: 1
 --- stdout
 
 --- stderr
-Missing required export: ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/artoo/workspace/health-data/sleep.jsonl
+Missing required export: ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/artoo/workspace/health-data/sleep.jsonl

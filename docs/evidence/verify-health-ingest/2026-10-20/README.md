@@ -1,6 +1,6 @@
 # verify-health-ingest proof run, 2026-10-20
 
-One end-to-end run of `.agents/skills/verify-health-ingest` at commit `a6710c2` (Worker revision `verify-a6710c2df5cc`, see `doctor-final`), following every feature recipe in order: launch with `verify up --tailnet`, doctor, every feature including component restarts, then `verify down` (`cleanup-down`), after which these files were confirmed present.
+One end-to-end run of `.agents/skills/verify-health-ingest` at commit `3477fcc` (Worker revision `verify-3477fcc689c9`, see `doctor-final`), following every feature recipe in order: launch with `verify up --tailnet`, doctor, every feature including component restarts, then `verify down` (`cleanup-down`), after which these files were confirmed present.
 
 Every value is synthetic: fictional identities, per-run random receiver tokens, synthetic machine tokens, a fictional Hevy API and disposable stores. `verify rec` and `verify down` wrote these files with the home directory as `~` and the host's tailnet IP as `100.x.y.z`. The receiver ran in UTC.
 

@@ -1,5 +1,5 @@
-$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/private/writer_curl.conf -H 'Content-Type: application/json' --data-binary @~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/deep.json http://127.0.0.1:45673/ingest/synthetic
-started: 2026-10-20T22:36:27+00:00
+$ curl -sS -w '\n%{http_code}\n' -K ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/private/writer_curl.conf -H 'Content-Type: application/json' --data-binary @~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/deep.json http://127.0.0.1:55749/ingest/synthetic
+started: 2026-10-21T01:05:13+00:00
 exit: 0
 --- stdout
 {"error":"JSON nesting exceeds 128 containers"}

@@ -1,7 +1,7 @@
 $ ~/.t3/worktrees/health-ingest-public/verify-verification-skill/.agents/skills/verify-health-ingest/scripts/verify up native
-started: 2026-10-20T22:36:52+00:00
+started: 2026-10-21T01:05:28+00:00
 exit: 0
 --- stdout
-native receiver ready at http://100.x.y.z:41583 (store ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/native/data)
+native receiver ready at http://100.x.y.z:39003 (store ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/native/data)
 --- stderr
 

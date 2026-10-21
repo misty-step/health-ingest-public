@@ -1,8 +1,8 @@
-$ sh -c 'cat "$1"; echo; python3.14 -c "import json,sys; d=json.load(open(sys.argv[1])); print(len(d), [r[\"payload\"][\"kind\"] for r in d])" "$2"' _ ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/hevy/cursor.json ~/.cache/tmp/verify-health-ingest/20261020T223409Z-1302185/native/data/raw/hevy/2026-10-20.json
-started: 2026-10-20T22:36:15+00:00
+$ sh -c 'cat "$1"; echo; python3.14 -c "import json,sys; d=json.load(open(sys.argv[1])); print(len(d), [r[\"payload\"][\"kind\"] for r in d])" "$2"' _ ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/hevy/cursor.json ~/.cache/tmp/verify-health-ingest/20261021T010304Z-1736775/native/data/raw/hevy/2026-10-21.json
+started: 2026-10-21T01:05:03+00:00
 exit: 0
 --- stdout
-{"since": "2026-10-20T22:36:14Z"}
+{"since": "2026-10-21T01:05:03Z"}
 2 ['backfill', 'backfill']
 --- stderr
 

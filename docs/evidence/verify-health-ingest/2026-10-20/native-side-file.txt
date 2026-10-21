@@ -1,8 +1,8 @@
-$ curl -sS -w '\n%{http_code}\n' -H 'Authorization: Bearer synthetic-native-76267dbafbd4ee9f' -d '{"fictional":2}' http://100.x.y.z:52903/ingest/sidecar
-started: 2026-10-20T22:36:09+00:00
+$ curl -sS -w '\n%{http_code}\n' -H 'Authorization: Bearer synthetic-native-aec77b8ff118968b' -d '{"fictional":2}' http://100.x.y.z:55563/ingest/sidecar
+started: 2026-10-21T01:04:59+00:00
 exit: 0
 --- stdout
-{"status": "ok", "source": "sidecar", "stored": "data/raw/sidecar/2026-10-20.223609.json", "bytes": 15}
+{"status": "ok", "source": "sidecar", "stored": "data/raw/sidecar/2026-10-21.010459.json", "bytes": 15}
 200
 --- stderr
 
