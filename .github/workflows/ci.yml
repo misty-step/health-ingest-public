@@ -18,7 +18,7 @@ jobs:
   native:
     name: Native Python (advisory on PRs)
     continue-on-error: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, hetzner-ci, health-ingest-public-ci]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
@@ -27,13 +27,15 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.14.7'
+      - name: Register Python runtime for clean-environment subprocesses
+        run: sudo ldconfig "$pythonLocation/lib"
       - run: python -m unittest discover -s tests -v
       - name: Failure notification drill
         if: github.event_name == 'workflow_dispatch' && inputs.drill
         run: exit 1
   worker:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, hetzner-ci, health-ingest-public-ci]
     timeout-minutes: 15
     defaults:
       run:
@@ -55,7 +57,7 @@ jobs:
   notify:
     needs: [native, worker]
     if: failure() && github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, hetzner-ci, health-ingest-public-ci]
     timeout-minutes: 5
     permissions:
       issues: write
